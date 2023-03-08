@@ -1,9 +1,10 @@
 # Intelligent State Detector
 The goal of this project is to create an AI that fits on a microcontroller and can differentiate between a person laying, standing, walking and running.
-# Our plan
+## Our plan
 ![roadmap](images/roadmap.png)
-# TODO
+## TODO
 - [ ] Translate all materials to english
+- [ ] Add license to project
 - [ ] Create device schematic
 - [ ] Acquire all components for the device
 - [ ] Design and 3D print the case
