@@ -3,7 +3,7 @@ The goal of this project is to create an AI that fits on a microcontroller and c
 ## Our plan
 ![roadmap](images/roadmap.png)
 ## TODO
-- [ ] Translate all materials to english
+- [x] Translate all materials to english
 - [ ] Add license to project
 - [ ] Create device schematic
 - [ ] Acquire all components for the device
