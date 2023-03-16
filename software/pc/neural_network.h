@@ -3,7 +3,9 @@
 
 #include <stdint.h>
 
-#define INPUT_DATA_COUNT 6 * 10
+#define DATA_FRAME_SIZE 6
+#define PACKET_SIZE 10
+#define INPUT_DATA_COUNT DATA_FRAME_SIZE * PACKET_SIZE
 
 // Number of inputs to each layer
 #define INPUT_COUNT_1 INPUT_DATA_COUNT
@@ -36,12 +38,12 @@ typedef struct NeuralNetwork
 } NeuralNetwork;
 
 typedef struct DataFrame { uint16_t x[INPUT_DATA_COUNT]; } DataFrame;
-
+typedef struct DataPacket { DataFrame x[PACKET_SIZE]; } DataPacket
 void NN_init(NeuralNetwork nn);
 void NN_print(NeuralNetwork nn);
-char NN_process_input(NeuralNetwork nn, DataFrame df);
-void NN_learn_df(NeuralNetwork nn, DataFrame df);
-void NN_learn(NeuralNetwork nn, DataFrame dfs[]);
+char NN_process_input(NeuralNetwork nn, DataPacket dp);
+void NN_learn_dp(NeuralNetwork nn, DataPacket dp, char expected);
+void NN_learn(NeuralNetwork nn, DataFrame dfs[], int count, char expected);
 void NN_save_to_text_file(NeuralNetwork nn, const char* filename);
 void NN_read_from_text_file(NeuralNetwork nn, const char* filename);
 
