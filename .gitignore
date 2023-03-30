@@ -1,2 +1,4 @@
 .directory
 .vscode
+.idea
+software/pc/cmake-build-debug/*
