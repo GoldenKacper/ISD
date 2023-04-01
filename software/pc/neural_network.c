@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "neural_network.h"
 
@@ -237,6 +238,104 @@ float dSigmoid(float x) {
 
 
 #pragma endregion
+
+
+#pragma region save and read functions
+
+
+void NN_save_to_text_file(NeuralNetwork nn, const char* filename) {
+    FILE *fptr;
+    fptr = fopen(filename, "w");
+
+    for (int i = 0; i < HIDDEN_NEURONS_COUNT; ++i) {
+        for (int j = 0; j < INPUT_NEURONS_COUNT; ++j) {
+            fprintf(fptr, "%.6f ", nn.hiddenWeights[i][j]);
+        }
+        fprintf(fptr, "\n");
+    }
+    fprintf(fptr, "\n");
+
+    for (int i = 0; i < OUTPUT_NEURONS_COUNT; ++i) {
+        for (int j = 0; j < HIDDEN_NEURONS_COUNT; ++j) {
+            fprintf(fptr, "%.6f ", nn.outputsWeights[i][j]);
+        }
+        fprintf(fptr, "\n");
+    }
+    fprintf(fptr, "\n");
+
+    for (int i = 0; i < HIDDEN_LAYER_BIAS_COUNT; ++i) {
+        fprintf(fptr, "%.6f ", nn.hiddenBias[i]);
+    }
+    fprintf(fptr, "\n");
+    fprintf(fptr, "\n");
+    for (int i = 0; i < OUTPUTS_LAYER_BIAS_COUNT; ++i) {
+        fprintf(fptr, "%.6f ", nn.outputsBias[i]);
+    }
+
+    fclose(fptr);
+}
+
+
+void NN_read_from_text_file(NeuralNetwork* nn, const char *filename) {
+    FILE *fptr;
+    fptr = fopen(filename, "r");
+
+    char line[FILE_LINE_MAX_LENGTH];
+
+    int j;
+    for (int i = 0; i < HIDDEN_NEURONS_COUNT; ++i) {
+        j = 0;
+        fgets(line, FILE_LINE_MAX_LENGTH, fptr);
+        char* numbersHW = strtok(line, " ");
+        while (numbersHW != NULL) {
+            char* number = numbersHW;
+            nn->hiddenWeights[i][j] = (float) atof(number);
+            numbersHW = strtok(NULL, " ");
+            j++;
+        }
+    }
+
+    fgets(line, FILE_LINE_MAX_LENGTH, fptr);
+    for (int i = 0; i < OUTPUT_NEURONS_COUNT; ++i) {
+        j = 0;
+        fgets(line, FILE_LINE_MAX_LENGTH, fptr);
+        char* numbersOW = strtok(line, " ");
+        while (numbersOW != NULL) {
+            char* number = numbersOW;
+            nn->outputsWeights[i][j] = (float) atof(number);
+            numbersOW = strtok(NULL, " ");
+            j++;
+        }
+    }
+
+    fgets(line, FILE_LINE_MAX_LENGTH, fptr);
+    j = 0;
+    fgets(line, FILE_LINE_MAX_LENGTH, fptr);
+    char* numbersHB = strtok(line, " ");
+    while (numbersHB != NULL) {
+        char* number = numbersHB;
+        nn->hiddenBias[j] = (float) atof(number);
+        numbersHB = strtok(NULL, " ");
+        j++;
+    }
+
+    fgets(line, FILE_LINE_MAX_LENGTH, fptr);
+    j = 0;
+    fgets(line, FILE_LINE_MAX_LENGTH, fptr);
+    char* numbersOB = strtok(line, " ");
+    while (numbersOB != NULL) {
+        char* number = numbersOB;
+        nn->outputsBias[j] = (float) atof(number);
+        numbersOB = strtok(NULL, " ");
+        j++;
+    }
+
+    fclose(fptr);
+}
+
+
+#pragma endregion
+
 
 #pragma region support functions
 

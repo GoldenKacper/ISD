@@ -15,17 +15,20 @@ void myWorkshop_1() {
     DataPacket dataPacket;
     for (int i = 0; i < 10; ++i) {
         for (int j = 0; j < 6; ++j) {
-            dataPacket.x[i].x[j] = 0;
+            dataPacket.x[i].x[j] = 1;
         }
     }
 
     // Initialize neuralNetwork
     NeuralNetwork nn;
-    //NN_init(&nn);
-    NN_testInit(&nn);
+//    NN_init(&nn);
+    //NN_testInit(&nn);
+
+    NN_read_from_text_file(&nn, "../test.txt");
 #pragma endregion neural network and data packet initialized
 
     calculateNeuralNetworkValues(&nn, dataPacket);
+
 //    nn.outputsNeurons[0] = 0.0f;
 //    nn.outputsNeurons[1] = 0.95f;
 //    nn.outputsNeurons[2] = 0.0f;
@@ -47,6 +50,9 @@ void myWorkshop_1() {
     // showing a TOTAL_WEIGHTS_AND_BIAS_COUNT
     printf("\n");
     printf("%d\n", TOTAL_WEIGHTS_AND_BIAS_COUNT);
+
+//    NN_save_to_text_file(nn, "../test.txt");
+
 
 #pragma endregion
 }

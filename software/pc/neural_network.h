@@ -5,7 +5,14 @@
 #include <stdlib.h>
 #include <math.h>
 
+#define FILE_LINE_MAX_LENGTH 600
+#define FILE_NUMBER_LENGTH 30
+
 #define TOLERANCE_DEGREE 0.90f
+
+#define EPOCHS_NUMBER 100000 // the number of training epochs
+#define LEARNING_RATE 0.6 // should be less
+#define MOMENTUM 0.9 // we'll see
 
 #define DATA_FRAME_SIZE 6
 #define PACKET_SIZE 10
@@ -61,6 +68,14 @@ typedef struct DataPacket
     DataFrame x[PACKET_SIZE];
 } DataPacket;
 
+typedef struct GradientDescent
+{
+    float hiddenWeightsGradient[HIDDEN_NEURONS_COUNT][INPUT_NEURONS_COUNT];
+    float outputsWeightsGradient[OUTPUT_NEURONS_COUNT][HIDDEN_NEURONS_COUNT];
+    float hiddenBiasGradient[HIDDEN_LAYER_BIAS_COUNT];
+    float outputsBiasGradient[OUTPUTS_LAYER_BIAS_COUNT];
+} GradientDescent;
+
 // init functions
 void NN_init(NeuralNetwork* nn);
 void NN_testInit(NeuralNetwork* nn); // alternative NN_init for testing
@@ -69,12 +84,20 @@ void NN_testInit(NeuralNetwork* nn); // alternative NN_init for testing
 char NN_process_output(NeuralNetwork nn);
 
 // learning functions
-void NN_learn_dp(NeuralNetwork nn, DataPacket dp, char expected);
-void NN_learn(NeuralNetwork nn, DataFrame dfs[], int count, char expected);
+// main functions to learn
+// it needs Neural Network and all DataPacket set for training
+// the same amount expectedValues as dataPacket array size
+// dataPacket array size is equal to expectedValues array size
+// so dataPacket[dpSize] and expectedValues[dpSize]
+// the result of this function will be a learned network
+void NN_learn(NeuralNetwork* neuralNetwork, DataPacket dataPacket[], char expectedValues[], int dpSize, int epochsNumber);
+
+//void NN_learn_dp(NeuralNetwork nn, DataPacket dp, char expected);
+//void NN_learn(NeuralNetwork nn, DataFrame dfs[], int count, char expected);
 
 // saving and reading functions
 void NN_save_to_text_file(NeuralNetwork nn, const char* filename);
-void NN_read_from_text_file(NeuralNetwork nn, const char* filename);
+void NN_read_from_text_file(NeuralNetwork* nn, const char* filename);
 
 // printing functions
 void NN_print(NeuralNetwork nn);
