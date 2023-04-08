@@ -118,6 +118,7 @@ float sigmoid(float x); // activation function
 float dSigmoid(float x); // derivative of the activation function
 float calculateDeltaChangingValue(float newGradientsValue, float previousGradientsValue); // calculate finall gradient's values
 void NN_modify_values(NeuralNetwork *nn, Gradient *gradient); // modify neural network's weights and bias with a gradient values
+// TODO costFunction to code
 
 
 /// support functions
