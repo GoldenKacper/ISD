@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "neural_network.h"
 
+
 void myWorkshop_1(); // neural network - forward propagation
 void myWorkshop_2(); // modify gradient and neural network
 void myWorkshop_3(); // shuffle training sets and expectedValues array
@@ -13,9 +14,8 @@ int main() {
 //    myWorkshop_2();
 //    myWorkshop_3();
 //    myWorkshop_4();
-    myWorkshop_5();
-//    myWorkshop_6();
-
+//    myWorkshop_5();
+    myWorkshop_6();
 
     return 0;
 }
@@ -188,6 +188,7 @@ void myWorkshop_4() {
 }
 
 void myWorkshop_5() {
+#pragma region setUp
     //create variables
     NeuralNetwork nn;
     NN_testInit(&nn, 1);
@@ -217,23 +218,50 @@ void myWorkshop_5() {
     expectedValues[3] = 'w';
     expectedValues[4] = 'r';
 
+    // setUp expected values for tests
+    float test[5];
+    test[0] = 0;
+    test[1] = 0;
+    test[2] = 0;
+    test[3] = 0;
+    test[4] = 0;
+#pragma endregion
 
-    calculateAverageGradient(&gradient, &nn, dataPackets, expectedValues, 0);
+    // test of calculateAverageGradient
+    calculateAverageGradient(&gradient, &nn, dataPackets, expectedValues, 0, 5);
 
     //gradient_print(gradient);
 
+    // modify neural network for tests
     for (int i = 0; i < 5; ++i) {
         for (int j = 0; j < 60; ++j) {
             nn.outputsWeights[i][j] = 0.1f;
             nn.hiddenNeurons[j] = 0.1f;
         }
     }
+    for (int i = 0; i < 60; ++i) {
+        for (int j = 0; j < 60; ++j) {
+            nn.hiddenWeights[i][j] = 0.1f;
+            nn.inputsNeurons[j] = 0.1f;
+        }
+    }
 
-
+#pragma region printing data
+    // printing data
     NN_print(nn);
     NN_neurons_values_print(nn);
 
-    printf("function result: %f\n", F_outputsWeights(&nn, 0, 0, 0));
+    printf("Formula 1 | function result: %f\n", F_outputsWeights(&nn, 0, 0, 0));
+    printf("Formula 2 | function result: %f\n", F_outputsBias(&nn, 0, 0));
+    printf("Formula 3 | function result: %f\n", F_hiddenWeights(&nn, 0, 0, test));
+    printf("Formula 4 | function result: %f\n", F_hiddenBias(&nn, 0, test));
+#pragma endregion
+
+    // test of calculateAverageGradient
+    calculateAverageGradient(&gradient, &nn, dataPackets, expectedValues, 0, 5);
+
+    // print gradient
+    gradient_print(gradient);
 }
 
 void myWorkshop_6() {
@@ -241,7 +269,7 @@ void myWorkshop_6() {
     NeuralNetwork nn;
     NN_testInit(&nn, 1);
 
-    int arraySize = 2;
+    int arraySize = 1000; // max value is 8256 but I don't know why
     DataPacket dataPackets[arraySize];
     char expectedValues[arraySize];
 
@@ -254,12 +282,13 @@ void myWorkshop_6() {
         }
     }
 
-    // init expectedValues
+    // setup expectedValues
     for (int i = 0; i < arraySize; ++i) {
-        expectedValues[i] = (char) (97 + i);
+        expectedValues[i] = 'n';
     }
 
-    NN_learn(&nn, dataPackets, expectedValues, arraySize, 1);
+
+    NN_learn(&nn, dataPackets, expectedValues, arraySize, 5);
 
     NN_print(nn);
 }

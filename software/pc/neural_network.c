@@ -1,8 +1,5 @@
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
-
 #include "neural_network.h"
+
 
 #pragma region init functions
 
@@ -126,6 +123,8 @@ void NN_learn(NeuralNetwork *neuralNetwork, DataPacket *trainingDataPacket, char
     Gradient previousGradient;
 
     for (int epoch = 0; epoch < epochsNumber; ++epoch) {
+        // printing comment
+        printf("\n\n### Epoch: %d ###\n\n", epoch);
 
         // shuffle a training set
         shuffleTrainingSet(trainingDataPacket, dpSize, expectedValues);
@@ -137,10 +136,18 @@ void NN_learn(NeuralNetwork *neuralNetwork, DataPacket *trainingDataPacket, char
         // TRAINING_SET_SIZE(100) dataPackets of each trainingSet
         // calculate gradient of each training set and modified weights and bias
         for (int trainingSetNumber = 0; trainingSetNumber < dpSize; trainingSetNumber += TRAINING_SET_SIZE) {
+            if (trainingSetNumber + TRAINING_SET_SIZE >= dpSize) {
+                // average values of the gradient of cost function
+                // Sets the new values into newGradient
+                calculateAverageGradient(&newGradient, neuralNetwork, trainingDataPacket, expectedValues,
+                                         trainingSetNumber, dpSize - trainingSetNumber);
+            } else {
+                // average values of the gradient of cost function
+                // Sets the new values into newGradient
+                calculateAverageGradient(&newGradient, neuralNetwork, trainingDataPacket, expectedValues,
+                                         trainingSetNumber, TRAINING_SET_SIZE);
 
-            // average values of the gradient of cost function
-            // Sets the new values into newGradient
-            // TODO calculate average values gradient of cost function
+            }
 
             // use a function with learning rate and momentum
             // calculate a finall delta of weights and bias
@@ -156,12 +163,11 @@ void NN_learn(NeuralNetwork *neuralNetwork, DataPacket *trainingDataPacket, char
             // Reset gradient's values, sets them to 0
             gradientReset(&newGradient);
         }
-
     }
 }
 
 void calculateAverageGradient(Gradient *avgGradient, NeuralNetwork *nn, DataPacket *miniTrainingSet,
-                              char *miniExpectedValues, int dataPacketStartIndex) {
+                              char *miniExpectedValues, int dataPacketStartIndex, int trainingSetSize) {
     // initialize variables
     Gradient gradient;
     float avgCost = 0.f;
@@ -169,7 +175,7 @@ void calculateAverageGradient(Gradient *avgGradient, NeuralNetwork *nn, DataPack
     float costVector[OUTPUT_NEURONS_COUNT];
     float expectedValueAsFloats[OUTPUT_NEURONS_COUNT];
 
-    for (int i = 0; i < TRAINING_SET_SIZE; ++i) {
+    for (int i = 0; i < trainingSetSize; ++i) {
         // reset the gradient before use
         gradientInit(&gradient, 0); // have to be 0
 
@@ -180,7 +186,8 @@ void calculateAverageGradient(Gradient *avgGradient, NeuralNetwork *nn, DataPack
         convertExpVal(expectedValueAsFloats, miniExpectedValues[dataPacketStartIndex]);
         costFunctionVector(costVector, nn, expectedValueAsFloats, OUTPUT_NEURONS_COUNT);
 
-        // TODO calculate one gradient of cost function
+        // calculate one gradient of cost function
+        calculateGradient(&gradient, nn, expectedValueAsFloats);
 
         // calculating and summing up the cost values
         avgCost += totalCostFunctionValue(costVector, OUTPUT_NEURONS_COUNT);
@@ -212,41 +219,48 @@ void calculateAverageGradient(Gradient *avgGradient, NeuralNetwork *nn, DataPack
 
     // calculate average cost function vector
     for (int i = 0; i < OUTPUT_NEURONS_COUNT; ++i) {
-        avgCostVector[i] /= TRAINING_SET_SIZE;
+        avgCostVector[i] /= trainingSetSize;
     }
 
     // calculate average cost function and print
-    avgCost /= TRAINING_SET_SIZE;
-    printf("Start index: %d\t|\tCost Of Gradient Function =\t%f\n",dataPacketStartIndex-TRAINING_SET_SIZE, avgCost);
+    avgCost /= trainingSetSize;
+    printf("Start index: %d\t|\tCost Of Gradient Function =\t%f\n\n", dataPacketStartIndex - trainingSetSize, avgCost);
 
 
     // calculate average gradient's hidden weights and bias values
     for (int j = 0; j < HIDDEN_NEURONS_COUNT; ++j) {
         for (int k = 0; k < INPUT_NEURONS_COUNT; ++k) {
-            avgGradient->hiddenWeightsGradient[j][k] /= TRAINING_SET_SIZE;
+            avgGradient->hiddenWeightsGradient[j][k] /= trainingSetSize;
         }
-        avgGradient->hiddenBiasGradient[j] /= TRAINING_SET_SIZE;
+        avgGradient->hiddenBiasGradient[j] /= trainingSetSize;
     }
 
     // calculate average gradient's outputs weights and bias values
     for (int j = 0; j < OUTPUT_NEURONS_COUNT; ++j) {
         for (int k = 0; k < HIDDEN_NEURONS_COUNT; ++k) {
-            avgGradient->outputsWeightsGradient[j][k] /= TRAINING_SET_SIZE;
+            avgGradient->outputsWeightsGradient[j][k] /= trainingSetSize;
         }
-        avgGradient->outputsBiasGradient[j] /= TRAINING_SET_SIZE;
+        avgGradient->outputsBiasGradient[j] /= trainingSetSize;
     }
 }
 
-void calculateGradient(Gradient *gradient, NeuralNetwork *nn, float *expectedValues, int expectedValuesSize) {
-//    for (int i = 0; i < OUTPUT_NEURONS_COUNT; ++i) {
-//        for (int j = 0; j < HIDDEN_NEURONS_COUNT; ++j) {
-//            //gradient->outputsWeightsGradient[i][j] =
-//        }
-//    }
+void calculateGradient(Gradient *gradient, NeuralNetwork *nn, float *expectedValues) {
+    // calculate gradient's values for outputs weights and bias
+    for (int j_index = 0; j_index < OUTPUT_NEURONS_COUNT; ++j_index) {
+        for (int k_index = 0; k_index < HIDDEN_NEURONS_COUNT; ++k_index) {
+            gradient->outputsWeightsGradient[j_index][k_index] = F_outputsWeights(nn, j_index, k_index,
+                                                                                  expectedValues[j_index]);
+        }
+        gradient->outputsBiasGradient[j_index] = F_outputsBias(nn, j_index, expectedValues[j_index]);
+    }
 
-    // TODO formula 2 output bias
-    // TODO formula 3 hidden weights
-    // TODO formula 4 hidden bias
+    // calculate gradient's values for hidden weights and bias
+    for (int k_index = 0; k_index < HIDDEN_NEURONS_COUNT; ++k_index) {
+        for (int i_index = 0; i_index < INPUT_NEURONS_COUNT; ++i_index) {
+            gradient->hiddenWeightsGradient[k_index][i_index] = F_hiddenWeights(nn, k_index, i_index, expectedValues);
+        }
+        gradient->hiddenBiasGradient[k_index] = F_hiddenBias(nn, k_index, expectedValues);
+    }
 }
 
 void finallGradientChange(Gradient *newGradient, Gradient *previousGradient) {
@@ -279,9 +293,12 @@ void finallGradientChange(Gradient *newGradient, Gradient *previousGradient) {
 
 
 void NN_save_to_text_file(NeuralNetwork nn, const char *filename) {
+    // init variables
     FILE *fptr;
     fptr = fopen(filename, "w");
 
+    // saving neural network's weights and bias
+    // saving hidden weights
     for (int i = 0; i < HIDDEN_NEURONS_COUNT; ++i) {
         for (int j = 0; j < INPUT_NEURONS_COUNT; ++j) {
             fprintf(fptr, "%.6f ", nn.hiddenWeights[i][j]);
@@ -290,6 +307,7 @@ void NN_save_to_text_file(NeuralNetwork nn, const char *filename) {
     }
     fprintf(fptr, "\n");
 
+    // saving outputs weights
     for (int i = 0; i < OUTPUT_NEURONS_COUNT; ++i) {
         for (int j = 0; j < HIDDEN_NEURONS_COUNT; ++j) {
             fprintf(fptr, "%.6f ", nn.outputsWeights[i][j]);
@@ -298,11 +316,14 @@ void NN_save_to_text_file(NeuralNetwork nn, const char *filename) {
     }
     fprintf(fptr, "\n");
 
+    // saving hidden bias
     for (int i = 0; i < HIDDEN_LAYER_BIAS_COUNT; ++i) {
         fprintf(fptr, "%.6f ", nn.hiddenBias[i]);
     }
     fprintf(fptr, "\n");
     fprintf(fptr, "\n");
+
+    // saving outputs bias
     for (int i = 0; i < OUTPUTS_LAYER_BIAS_COUNT; ++i) {
         fprintf(fptr, "%.6f ", nn.outputsBias[i]);
     }
@@ -312,12 +333,14 @@ void NN_save_to_text_file(NeuralNetwork nn, const char *filename) {
 
 
 void NN_read_from_text_file(NeuralNetwork *nn, const char *filename) {
+    // init variables
     FILE *fptr;
     fptr = fopen(filename, "r");
 
     char line[FILE_LINE_MAX_LENGTH];
-
     int j;
+
+    // read hidden weights of neural network
     for (int i = 0; i < HIDDEN_NEURONS_COUNT; ++i) {
         j = 0;
         fgets(line, FILE_LINE_MAX_LENGTH, fptr);
@@ -330,6 +353,7 @@ void NN_read_from_text_file(NeuralNetwork *nn, const char *filename) {
         }
     }
 
+    // read outputs weights of neural network
     fgets(line, FILE_LINE_MAX_LENGTH, fptr);
     for (int i = 0; i < OUTPUT_NEURONS_COUNT; ++i) {
         j = 0;
@@ -343,6 +367,7 @@ void NN_read_from_text_file(NeuralNetwork *nn, const char *filename) {
         }
     }
 
+    // read hidden bias of neural network
     fgets(line, FILE_LINE_MAX_LENGTH, fptr);
     j = 0;
     fgets(line, FILE_LINE_MAX_LENGTH, fptr);
@@ -354,6 +379,7 @@ void NN_read_from_text_file(NeuralNetwork *nn, const char *filename) {
         j++;
     }
 
+    // read outputs bias of neural network
     fgets(line, FILE_LINE_MAX_LENGTH, fptr);
     j = 0;
     fgets(line, FILE_LINE_MAX_LENGTH, fptr);
@@ -571,6 +597,7 @@ void shuffleTrainingSet(DataPacket *trainingSet, int t_s_size, char *expectedVal
 }
 
 float totalCostFunctionValue(float *costVector, int arraySize) {
+    // sum up a vector's values into one number
     float cost = 0.f;
     for (int i = 0; i < arraySize; ++i) {
         cost += costVector[i];
@@ -579,6 +606,7 @@ float totalCostFunctionValue(float *costVector, int arraySize) {
 }
 
 void costFunctionVector(float *costVector, NeuralNetwork *nn, float *expectedValues, int arraySize) {
+    // calculate cost function vector from formula
     for (int i = 0; i < arraySize; ++i) {
         costVector[i] = (nn->outputsNeurons[i] - expectedValues[i]) * (nn->outputsNeurons[i] - expectedValues[i]);
     }
@@ -601,6 +629,77 @@ float F_outputsWeights(NeuralNetwork *nn, int j_index, int k_index, float expect
     z_j += nn->outputsBias[j_index];
 
     result = nn->hiddenNeurons[k_index] * dSigmoid(z_j) * 2 * (nn->outputsNeurons[j_index] - expectedOutputNeuron);
+    return result;
+}
+
+float F_outputsBias(NeuralNetwork *nn, int j_index, float expectedOutputNeuron) {
+    float result;
+    float z_j = 0.f;
+
+    for (int k = 0; k < HIDDEN_NEURONS_COUNT; ++k) {
+        z_j += nn->outputsWeights[j_index][k] * nn->hiddenNeurons[k];
+    }
+    z_j += nn->outputsBias[j_index];
+
+    result = 1 * dSigmoid(z_j) * 2 * (nn->outputsNeurons[j_index] - expectedOutputNeuron);
+    return result;
+}
+
+float F_hiddenWeights(NeuralNetwork *nn, int k_index, int i_index, const float *expectedOutputsNeurons) {
+    float result;
+    float temp = 0.f;
+    float z_k = 0.f;
+    float z_j;
+
+    for (int i = 0; i < INPUT_NEURONS_COUNT; ++i) {
+        z_k += nn->hiddenWeights[k_index][i] * nn->inputsNeurons[i];
+    }
+    z_k += nn->hiddenBias[k_index];
+
+    result = nn->inputsNeurons[i_index] * dSigmoid(z_k);
+
+    for (int j = 0; j < OUTPUT_NEURONS_COUNT; ++j) {
+        z_j = 0.f;
+
+        for (int k = 0; k < HIDDEN_NEURONS_COUNT; ++k) {
+            z_j += nn->outputsWeights[j][k] * nn->hiddenNeurons[k];
+        }
+        z_j += nn->outputsBias[j];
+
+        temp += nn->outputsWeights[j][k_index] * dSigmoid(z_j) * 2 *
+                (nn->outputsNeurons[j] - expectedOutputsNeurons[j]);
+    }
+
+    result *= temp;
+    return result;
+}
+
+float F_hiddenBias(NeuralNetwork *nn, int k_index, const float *expectedOutputsNeurons) {
+    float result;
+    float temp = 0.f;
+    float z_k = 0.f;
+    float z_j;
+
+    for (int i = 0; i < INPUT_NEURONS_COUNT; ++i) {
+        z_k += nn->hiddenWeights[k_index][i] * nn->inputsNeurons[i];
+    }
+    z_k += nn->hiddenBias[k_index];
+
+    result = 1 * dSigmoid(z_k);
+
+    for (int j = 0; j < OUTPUT_NEURONS_COUNT; ++j) {
+        z_j = 0.f;
+
+        for (int k = 0; k < HIDDEN_NEURONS_COUNT; ++k) {
+            z_j += nn->outputsWeights[j][k] * nn->hiddenNeurons[k];
+        }
+        z_j += nn->outputsBias[j];
+
+        temp += nn->outputsWeights[j][k_index] * dSigmoid(z_j) * 2 *
+                (nn->outputsNeurons[j] - expectedOutputsNeurons[j]);
+    }
+
+    result *= temp;
     return result;
 }
 
