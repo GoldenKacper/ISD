@@ -10,7 +10,7 @@
 
 #define TOLERANCE_DEGREE 0.90f
 
-#define trainingSetSize 100 // Size of each training set
+#define TRAINING_SET_SIZE 5 // Size of each training set, should be 100 // TODO set it back on 100 !!!
 #define EPOCHS_NUMBER 100000 // the number of training epochs
 #define LEARNING_RATE 0.6 // should be less
 #define MOMENTUM 0.9 // we'll see
@@ -94,10 +94,17 @@ char NN_process_output(NeuralNetwork nn); // finall output value of neural netwo
 void NN_learn(NeuralNetwork *neuralNetwork, DataPacket trainingDataPacket[], char expectedValues[], int dpSize,
               int epochsNumber);
 
+// calculate average gradient of cost function
+// result will be return as avgGradient
+// calculates the gradient for some subset of the training set
+// the subset starts with dataPacketStartIndex and ends with TRAINING_SET_SIZE
+void calculateAverageGradient(Gradient *avgGradient, NeuralNetwork *nn, DataPacket *miniTrainingSet, char *miniExpectedValues, int dataPacketStartIndex);
+void calculateGradient(Gradient *gradient, NeuralNetwork *nn, float *expectedValues, int expectedValuesSize);
 void finallGradientChange(Gradient *newGradient, Gradient *previousGradient); // calculate finall newGradient's values
 
 //void NN_learn_dp(NeuralNetwork nn, DataPacket dp, char expected);
 //void NN_learn(NeuralNetwork nn, DataFrame dfs[], int count, char expected);
+
 
 
 /// saving and reading functions
@@ -119,15 +126,21 @@ float dSigmoid(float x); // derivative of the activation function
 float calculateDeltaChangingValue(float newGradientsValue, float previousGradientsValue); // calculate finall gradient's values
 void NN_modify_values(NeuralNetwork *nn, Gradient *gradient); // modify neural network's weights and bias with a gradient values
 void shuffleTrainingSet(DataPacket *trainingSet, int t_s_size, char *expectedValues); // shuffle a training set
-// TODO total costFunction (return one float number ) to code
-// TODO costFunction as a vector to code
+float totalCostFunctionValue(float *costVector, int arraySize);
+void costFunctionVector(float *costVector, NeuralNetwork *nn, float *expectedValues, int arraySize); //calculate cost function vector and set this floats into costVector
 
+
+/// formulas needed to calculate the gradient
+float F_outputsWeights(NeuralNetwork *nn, int j_index, int k_index, float expectedOutputNeuron); // F - formula
 
 /// support functions
 float drawNumber(); // draw a number between -0.5 and 0.5
 void gradientInit(Gradient *gradient, int initValue); // initialize gradient variables on chosen value
+void gradientReset(Gradient *gradient);
 void swapGradient(Gradient *newGradient, Gradient *previousGradient); // Set previousGradient as newGradient: previousGradient = newGradient
 void shuffle(int *array, size_t n);
+// !!!warn!!! if you change count of outputs neurons you have to rebuild this function
+void convertExpVal(float *expValAsFloats, char value); // convert expected value as char to float array
 
 /// cloning and coping functions
 void cloneDataPackets(DataPacket *cloneDataPacket, DataPacket *dataPacket, int dp_size);

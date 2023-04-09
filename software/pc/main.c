@@ -4,13 +4,18 @@
 void myWorkshop_1(); // neural network - forward propagation
 void myWorkshop_2(); // modify gradient and neural network
 void myWorkshop_3(); // shuffle training sets and expectedValues array
-void myWorkshop_4(); // calculate gradient
+void myWorkshop_4(); // calculate cost function
+void myWorkshop_5(); // calculate gradient
+void myWorkshop_6(); // learning
 
 int main() {
 //    myWorkshop_1();
 //    myWorkshop_2();
 //    myWorkshop_3();
-    myWorkshop_4();
+//    myWorkshop_4();
+    myWorkshop_5();
+//    myWorkshop_6();
+
 
     return 0;
 }
@@ -28,9 +33,9 @@ void myWorkshop_1() {
     // Initialize neuralNetwork
     NeuralNetwork nn;
 //    NN_init(&nn);
-    //NN_testInit(&nn);
+    NN_testInit(&nn, 1);
 
-    NN_read_from_text_file(&nn, "../test.txt");
+//    NN_read_from_text_file(&nn, "../test.txt");
 #pragma endregion neural network and data packet initialized
 
     calculateNeuralNetworkValues(&nn, dataPacket);
@@ -145,6 +150,116 @@ void myWorkshop_3() {
 }
 
 void myWorkshop_4() {
+#pragma region setUp
+    // create variables
+    NeuralNetwork nn;
+    NN_testInit(&nn, 0);
+
+    int arraySize = 2;
+    DataPacket dataPackets[arraySize];
+    char expectedValues[arraySize];
+
+    float expValAsFloats[OUTPUT_NEURONS_COUNT]; // have to be 5
+    float costVector[OUTPUT_NEURONS_COUNT];
+
+    // initialize variables
+    expectedValues[0] = 'l';
+    expectedValues[1] = 's';
+#pragma endregion
 
 
+    convertExpVal(expValAsFloats, expectedValues[0]);
+    costFunctionVector(costVector, &nn, expValAsFloats, OUTPUT_NEURONS_COUNT);
+    float cost = totalCostFunctionValue(costVector, OUTPUT_NEURONS_COUNT);
+
+
+#pragma region printing data
+    // printing variables
+    printf("%c:\t", expectedValues[0]);
+    for (int i = 0; i < OUTPUT_NEURONS_COUNT; ++i) {
+        printf("%f ", expValAsFloats[i]);
+    }
+    printf("\n\n");
+    for (int i = 0; i < OUTPUT_NEURONS_COUNT; ++i) {
+        printf("%f ", costVector[i]);
+    }
+    printf("\n%f\n", cost);
+#pragma endregion
+}
+
+void myWorkshop_5() {
+    //create variables
+    NeuralNetwork nn;
+    NN_testInit(&nn, 1);
+
+    Gradient gradient;
+
+    int arraySize = 5;
+    DataPacket dataPackets[arraySize];
+    char expectedValues[arraySize];
+
+    // init gradient
+    gradientInit(&gradient, 0);
+
+    // init dataPackets
+    for (int i = 0; i < arraySize; ++i) {
+        for (int j = 0; j < PACKET_SIZE; ++j) {
+            for (int k = 0; k < DATA_FRAME_SIZE; ++k) {
+                dataPackets[i].x[j].x[k] = 1;
+            }
+        }
+    }
+
+    // init expectedValues
+    expectedValues[0] = 'n';
+    expectedValues[1] = 'l';
+    expectedValues[2] = 's';
+    expectedValues[3] = 'w';
+    expectedValues[4] = 'r';
+
+
+    calculateAverageGradient(&gradient, &nn, dataPackets, expectedValues, 0);
+
+    //gradient_print(gradient);
+
+    for (int i = 0; i < 5; ++i) {
+        for (int j = 0; j < 60; ++j) {
+            nn.outputsWeights[i][j] = 0.1f;
+            nn.hiddenNeurons[j] = 0.1f;
+        }
+    }
+
+
+    NN_print(nn);
+    NN_neurons_values_print(nn);
+
+    printf("function result: %f\n", F_outputsWeights(&nn, 0, 0, 0));
+}
+
+void myWorkshop_6() {
+    //create variables
+    NeuralNetwork nn;
+    NN_testInit(&nn, 1);
+
+    int arraySize = 2;
+    DataPacket dataPackets[arraySize];
+    char expectedValues[arraySize];
+
+    // init dataPackets
+    for (int i = 0; i < arraySize; ++i) {
+        for (int j = 0; j < PACKET_SIZE; ++j) {
+            for (int k = 0; k < DATA_FRAME_SIZE; ++k) {
+                dataPackets[i].x[j].x[k] = i;
+            }
+        }
+    }
+
+    // init expectedValues
+    for (int i = 0; i < arraySize; ++i) {
+        expectedValues[i] = (char) (97 + i);
+    }
+
+    NN_learn(&nn, dataPackets, expectedValues, arraySize, 1);
+
+    NN_print(nn);
 }

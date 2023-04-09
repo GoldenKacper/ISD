@@ -134,9 +134,9 @@ void NN_learn(NeuralNetwork *neuralNetwork, DataPacket *trainingDataPacket, char
         gradientInit(&newGradient, 0);
         gradientInit(&previousGradient, 0);
 
-        // trainingSetSize(100) dataPackets of each trainingSet
+        // TRAINING_SET_SIZE(100) dataPackets of each trainingSet
         // calculate gradient of each training set and modified weights and bias
-        for (int trainingSetNumber = 0; trainingSetNumber < dpSize / trainingSetSize; ++trainingSetNumber) {
+        for (int trainingSetNumber = 0; trainingSetNumber < dpSize; trainingSetNumber += TRAINING_SET_SIZE) {
 
             // average values of the gradient of cost function
             // Sets the new values into newGradient
@@ -152,9 +152,101 @@ void NN_learn(NeuralNetwork *neuralNetwork, DataPacket *trainingDataPacket, char
 
             // Set previousGradient as newGradient: previousGradient = newGradient
             swapGradient(&newGradient, &previousGradient);
+
+            // Reset gradient's values, sets them to 0
+            gradientReset(&newGradient);
         }
 
     }
+}
+
+void calculateAverageGradient(Gradient *avgGradient, NeuralNetwork *nn, DataPacket *miniTrainingSet,
+                              char *miniExpectedValues, int dataPacketStartIndex) {
+    // initialize variables
+    Gradient gradient;
+    float avgCost = 0.f;
+    float avgCostVector[OUTPUT_NEURONS_COUNT];
+    float costVector[OUTPUT_NEURONS_COUNT];
+    float expectedValueAsFloats[OUTPUT_NEURONS_COUNT];
+
+    for (int i = 0; i < TRAINING_SET_SIZE; ++i) {
+        // reset the gradient before use
+        gradientInit(&gradient, 0); // have to be 0
+
+        // calculate neurons values for this example
+        calculateNeuralNetworkValues(nn, miniTrainingSet[dataPacketStartIndex]);
+
+        // calculate cost function vectors
+        convertExpVal(expectedValueAsFloats, miniExpectedValues[dataPacketStartIndex]);
+        costFunctionVector(costVector, nn, expectedValueAsFloats, OUTPUT_NEURONS_COUNT);
+
+        // TODO calculate one gradient of cost function
+
+        // calculating and summing up the cost values
+        avgCost += totalCostFunctionValue(costVector, OUTPUT_NEURONS_COUNT);
+
+        // summing up the cost vectors values
+        for (int j = 0; j < OUTPUT_NEURONS_COUNT; ++j) {
+            avgCostVector[j] += costVector[j];
+        }
+
+        // summing up the gradients' hidden weights and bias values
+        for (int j = 0; j < HIDDEN_NEURONS_COUNT; ++j) {
+            for (int k = 0; k < INPUT_NEURONS_COUNT; ++k) {
+                avgGradient->hiddenWeightsGradient[j][k] += gradient.hiddenWeightsGradient[j][k];
+            }
+            avgGradient->hiddenBiasGradient[j] += gradient.hiddenBiasGradient[j];
+        }
+
+        // summing up the gradients' outputs weights and bias values
+        for (int j = 0; j < OUTPUT_NEURONS_COUNT; ++j) {
+            for (int k = 0; k < HIDDEN_NEURONS_COUNT; ++k) {
+                avgGradient->outputsWeightsGradient[j][k] += gradient.outputsWeightsGradient[j][k];
+            }
+            avgGradient->outputsBiasGradient[j] += gradient.outputsBiasGradient[j];
+        }
+
+        // increment index
+        dataPacketStartIndex++;
+    }
+
+    // calculate average cost function vector
+    for (int i = 0; i < OUTPUT_NEURONS_COUNT; ++i) {
+        avgCostVector[i] /= TRAINING_SET_SIZE;
+    }
+
+    // calculate average cost function and print
+    avgCost /= TRAINING_SET_SIZE;
+    printf("Start index: %d\t|\tCost Of Gradient Function =\t%f\n",dataPacketStartIndex-TRAINING_SET_SIZE, avgCost);
+
+
+    // calculate average gradient's hidden weights and bias values
+    for (int j = 0; j < HIDDEN_NEURONS_COUNT; ++j) {
+        for (int k = 0; k < INPUT_NEURONS_COUNT; ++k) {
+            avgGradient->hiddenWeightsGradient[j][k] /= TRAINING_SET_SIZE;
+        }
+        avgGradient->hiddenBiasGradient[j] /= TRAINING_SET_SIZE;
+    }
+
+    // calculate average gradient's outputs weights and bias values
+    for (int j = 0; j < OUTPUT_NEURONS_COUNT; ++j) {
+        for (int k = 0; k < HIDDEN_NEURONS_COUNT; ++k) {
+            avgGradient->outputsWeightsGradient[j][k] /= TRAINING_SET_SIZE;
+        }
+        avgGradient->outputsBiasGradient[j] /= TRAINING_SET_SIZE;
+    }
+}
+
+void calculateGradient(Gradient *gradient, NeuralNetwork *nn, float *expectedValues, int expectedValuesSize) {
+//    for (int i = 0; i < OUTPUT_NEURONS_COUNT; ++i) {
+//        for (int j = 0; j < HIDDEN_NEURONS_COUNT; ++j) {
+//            //gradient->outputsWeightsGradient[i][j] =
+//        }
+//    }
+
+    // TODO formula 2 output bias
+    // TODO formula 3 hidden weights
+    // TODO formula 4 hidden bias
 }
 
 void finallGradientChange(Gradient *newGradient, Gradient *previousGradient) {
@@ -478,6 +570,40 @@ void shuffleTrainingSet(DataPacket *trainingSet, int t_s_size, char *expectedVal
     }
 }
 
+float totalCostFunctionValue(float *costVector, int arraySize) {
+    float cost = 0.f;
+    for (int i = 0; i < arraySize; ++i) {
+        cost += costVector[i];
+    }
+    return cost;
+}
+
+void costFunctionVector(float *costVector, NeuralNetwork *nn, float *expectedValues, int arraySize) {
+    for (int i = 0; i < arraySize; ++i) {
+        costVector[i] = (nn->outputsNeurons[i] - expectedValues[i]) * (nn->outputsNeurons[i] - expectedValues[i]);
+    }
+}
+
+
+#pragma endregion
+
+
+#pragma region formulas needed to calculate the gradient
+
+
+float F_outputsWeights(NeuralNetwork *nn, int j_index, int k_index, float expectedOutputNeuron) {
+    float result;
+    float z_j = 0.f;
+
+    for (int k = 0; k < HIDDEN_NEURONS_COUNT; ++k) {
+        z_j += nn->outputsWeights[j_index][k] * nn->hiddenNeurons[k];
+    }
+    z_j += nn->outputsBias[j_index];
+
+    result = nn->hiddenNeurons[k_index] * dSigmoid(z_j) * 2 * (nn->outputsNeurons[j_index] - expectedOutputNeuron);
+    return result;
+}
+
 
 #pragma endregion
 
@@ -505,6 +631,10 @@ void gradientInit(Gradient *gradient, int initValue) {
         }
         gradient->outputsBiasGradient[i] = initValue;
     }
+}
+
+void gradientReset(Gradient *gradient) {
+    gradientInit(gradient, 0);
 }
 
 void swapGradient(Gradient *newGradient, Gradient *previousGradient) {
@@ -542,6 +672,69 @@ void shuffle(int *array, size_t n) {
     }
 }
 
+void convertExpVal(float *expValAsFloats, char value) {
+#pragma region Instruciton
+    // 0    1   2   3   4   | index
+    // n    l   s   w   r   | symbol
+
+    // Description of the symbols
+    // n - not on person
+    // l - lying
+    // s - sitting / standing
+    // w - walking
+    // r - running
+
+    // u - uncertain    | when flag > 1
+    // d - doubtful     | when flag < 1
+#pragma endregion
+
+    switch (value) {
+        case 'n':
+            expValAsFloats[0] = 1.f;
+            expValAsFloats[1] = 0.f;
+            expValAsFloats[2] = 0.f;
+            expValAsFloats[3] = 0.f;
+            expValAsFloats[4] = 0.f;
+            break;
+        case 'l':
+            expValAsFloats[0] = 0.f;
+            expValAsFloats[1] = 1.f;
+            expValAsFloats[2] = 0.f;
+            expValAsFloats[3] = 0.f;
+            expValAsFloats[4] = 0.f;
+            break;
+        case 's':
+            expValAsFloats[0] = 0.f;
+            expValAsFloats[1] = 0.f;
+            expValAsFloats[2] = 1.f;
+            expValAsFloats[3] = 0.f;
+            expValAsFloats[4] = 0.f;
+            break;
+        case 'w':
+            expValAsFloats[0] = 0.f;
+            expValAsFloats[1] = 0.f;
+            expValAsFloats[2] = 0.f;
+            expValAsFloats[3] = 1.f;
+            expValAsFloats[4] = 0.f;
+            break;
+        case 'r':
+            expValAsFloats[0] = 0.f;
+            expValAsFloats[1] = 0.f;
+            expValAsFloats[2] = 0.f;
+            expValAsFloats[3] = 0.f;
+            expValAsFloats[4] = 1.f;
+            break;
+        default:
+            expValAsFloats[0] = 0.f;
+            expValAsFloats[1] = 0.f;
+            expValAsFloats[2] = 0.f;
+            expValAsFloats[3] = 0.f;
+            expValAsFloats[4] = 0.f;
+            printf("\nError: something went wrong!\n!!! convertExpVal failed !!!\n");
+            break;
+    }
+}
+
 
 #pragma endregion
 
@@ -575,7 +768,6 @@ void cloneExpValues(char *cloneExpectedValues, const char *expectedValues, int d
         cloneExpectedValues[i] = expectedValues[i];
     }
 }
-
 
 
 #pragma endregion
