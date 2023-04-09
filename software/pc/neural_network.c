@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 #include "neural_network.h"
 
@@ -127,7 +128,7 @@ void NN_learn(NeuralNetwork *neuralNetwork, DataPacket *trainingDataPacket, char
     for (int epoch = 0; epoch < epochsNumber; ++epoch) {
 
         // shuffle a training set
-        // TODO shuffle a training set
+        shuffleTrainingSet(trainingDataPacket, dpSize, expectedValues);
 
         // initialize gradients
         gradientInit(&newGradient, 0);
@@ -452,6 +453,31 @@ void NN_modify_values(NeuralNetwork *nn, Gradient *gradient) {
     }
 }
 
+void shuffleTrainingSet(DataPacket *trainingSet, int t_s_size, char *expectedValues) {
+    // dataPackets cloning
+    DataPacket cloneTrainingSet[t_s_size];
+    cloneDataPackets(cloneTrainingSet, trainingSet, t_s_size);
+
+    // expectedValues cloning
+    char cloneExpectedValues[t_s_size];
+    cloneExpValues(cloneExpectedValues, expectedValues, t_s_size);
+
+    // initialize shuffle array
+    int shuffleSet[t_s_size];
+    for (int i = 0; i < t_s_size; ++i) {
+        shuffleSet[i] = i;
+    }
+
+    // shuffle the shuffle array
+    shuffle(shuffleSet, t_s_size);
+
+    // change elements' order in original training set and expectedValues array
+    for (int i = 0; i < t_s_size; ++i) {
+        copyDataPacket(&cloneTrainingSet[shuffleSet[i]], &trainingSet[i]);
+        expectedValues[i] = cloneExpectedValues[shuffleSet[i]];
+    }
+}
+
 
 #pragma endregion
 
@@ -500,6 +526,56 @@ void swapGradient(Gradient *newGradient, Gradient *previousGradient) {
         previousGradient->outputsBiasGradient[i] = newGradient->outputsBiasGradient[i];
     }
 }
+
+/* Arrange the N elements of ARRAY in random order.
+   Only effective if N is much smaller than RAND_MAX;
+   if this may not be the case, use a better random
+   number generator. */
+void shuffle(int *array, size_t n) {
+    srand(time(NULL));
+    int j, temp;
+    for (size_t i = n - 1; i > 0; i--) {
+        j = rand() % (i + 1);
+        temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
+
+
+#pragma endregion
+
+
+#pragma region cloning and coping functions
+
+
+void cloneDataPackets(DataPacket *cloneDataPacket, DataPacket *dataPacket, int dp_size) {
+    // cloning dataPacket array into another dataPacket array
+    for (int i = 0; i < dp_size; ++i) {
+        for (int j = 0; j < PACKET_SIZE; ++j) {
+            for (int k = 0; k < DATA_FRAME_SIZE; ++k) {
+                cloneDataPacket[i].x[j].x[k] = dataPacket[i].x[j].x[k];
+            }
+        }
+    }
+}
+
+void copyDataPacket(DataPacket *sourceDataPacket, DataPacket *destinationDataPacket) {
+    // copy dataPacket's values into another dataPacket's values
+    for (int i = 0; i < PACKET_SIZE; ++i) {
+        for (int j = 0; j < DATA_FRAME_SIZE; ++j) {
+            destinationDataPacket->x[i].x[j] = sourceDataPacket->x[i].x[j];
+        }
+    }
+}
+
+void cloneExpValues(char *cloneExpectedValues, const char *expectedValues, int dp_size) {
+    // cloning char array into another char array
+    for (int i = 0; i < dp_size; ++i) {
+        cloneExpectedValues[i] = expectedValues[i];
+    }
+}
+
 
 
 #pragma endregion

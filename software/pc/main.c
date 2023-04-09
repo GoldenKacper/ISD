@@ -3,11 +3,14 @@
 
 void myWorkshop_1(); // neural network - forward propagation
 void myWorkshop_2(); // modify gradient and neural network
-void myWorkshop_3(); // calculate gradient
+void myWorkshop_3(); // shuffle training sets and expectedValues array
+void myWorkshop_4(); // calculate gradient
 
 int main() {
 //    myWorkshop_1();
-    myWorkshop_2();
+//    myWorkshop_2();
+//    myWorkshop_3();
+    myWorkshop_4();
 
     return 0;
 }
@@ -97,4 +100,51 @@ void myWorkshop_2() {
 
     NN_print(nn);
     printf("\n\n\n\n");
+}
+
+void myWorkshop_3() {
+#pragma region setUp
+    // create variables
+    int arraySize = 6;
+    DataPacket dataPackets[arraySize];
+    char expectedValues[arraySize];
+
+    // init dataPackets
+    for (int i = 0; i < arraySize; ++i) {
+        for (int j = 0; j < PACKET_SIZE; ++j) {
+            for (int k = 0; k < DATA_FRAME_SIZE; ++k) {
+                dataPackets[i].x[j].x[k] = i;
+            }
+        }
+    }
+
+    // init expectedValues
+    for (int i = 0; i < arraySize; ++i) {
+        expectedValues[i] = (char) (97 + i);
+    }
+#pragma endregion
+
+
+    shuffleTrainingSet(dataPackets, arraySize, expectedValues);
+
+
+#pragma region printing data
+    for (int i = 0; i < arraySize; ++i) {
+        for (int j = 0; j < PACKET_SIZE; ++j) {
+            for (int k = 0; k < DATA_FRAME_SIZE; ++k) {
+                printf("%u ", dataPackets[i].x[j].x[k]);
+            }
+        }
+        printf("\n");
+    }
+    printf("\n");
+    for (int i = 0; i < arraySize; ++i) {
+        printf("%c ", expectedValues[i]);
+    }
+#pragma endregion
+}
+
+void myWorkshop_4() {
+
+
 }

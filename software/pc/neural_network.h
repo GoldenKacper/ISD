@@ -118,12 +118,21 @@ float sigmoid(float x); // activation function
 float dSigmoid(float x); // derivative of the activation function
 float calculateDeltaChangingValue(float newGradientsValue, float previousGradientsValue); // calculate finall gradient's values
 void NN_modify_values(NeuralNetwork *nn, Gradient *gradient); // modify neural network's weights and bias with a gradient values
-// TODO costFunction to code
+void shuffleTrainingSet(DataPacket *trainingSet, int t_s_size, char *expectedValues); // shuffle a training set
+// TODO total costFunction (return one float number ) to code
+// TODO costFunction as a vector to code
 
 
 /// support functions
 float drawNumber(); // draw a number between -0.5 and 0.5
 void gradientInit(Gradient *gradient, int initValue); // initialize gradient variables on chosen value
 void swapGradient(Gradient *newGradient, Gradient *previousGradient); // Set previousGradient as newGradient: previousGradient = newGradient
+void shuffle(int *array, size_t n);
+
+/// cloning and coping functions
+void cloneDataPackets(DataPacket *cloneDataPacket, DataPacket *dataPacket, int dp_size);
+void copyDataPacket(DataPacket *sourceDataPacket, DataPacket *destinationDataPacket);
+void cloneExpValues(char *cloneExpectedValues, const char *expectedValues, int dp_size);
+
 
 #endif //NEURALNETWORK_NEURAL_NETWORK_H
