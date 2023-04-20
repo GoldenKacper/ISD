@@ -3,7 +3,7 @@ The goal of this project is to create an AI that fits on a microcontroller and c
 ## Our plan
 ![roadmap](images/roadmap.png)
 ## Neural Network Schema
-
+![NeuralNetwork_1](images/NeuralNetwork_1.jpg)
 ## TODO
 - [x] Translate all materials to english
 - [ ] Add license to project
