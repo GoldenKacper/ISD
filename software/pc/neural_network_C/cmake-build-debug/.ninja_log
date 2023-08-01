@@ -1,0 +1,5 @@
+# ninja log v5
+1	99	7125944396067798	build.ninja	6ef21a2d55ceb699
+3	111	7027843853226373	CMakeFiles/neuralNetwork.dir/main.c.obj	7d772373adb2b669
+111	233	7027843854395640	neuralNetwork.exe	435bc4681ce66b9d
+6	184	7027840080942504	CMakeFiles/neuralNetwork.dir/neural_network.c.obj	5b9638ba7733a3a9

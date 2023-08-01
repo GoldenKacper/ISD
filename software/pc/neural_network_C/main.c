@@ -40,12 +40,6 @@ void myWorkshop_1() {
 
     calculateNeuralNetworkValues(&nn, dataPacket);
 
-//    nn.outputsNeurons[0] = 0.0f;
-//    nn.outputsNeurons[1] = 0.95f;
-//    nn.outputsNeurons[2] = 0.0f;
-//    nn.outputsNeurons[3] = 0.0f;
-//    nn.outputsNeurons[4] = 0.0f;
-//    nn.outputsNeurons[5] = 0.0f;
 
 
 #pragma region printing data

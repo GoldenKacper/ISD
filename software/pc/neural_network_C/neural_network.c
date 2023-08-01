@@ -94,6 +94,7 @@ char NN_process_output(NeuralNetwork nn) {
             case 0:
                 return 'n';
             case 1:
+                
                 return 'l';
             case 2:
                 return 's';

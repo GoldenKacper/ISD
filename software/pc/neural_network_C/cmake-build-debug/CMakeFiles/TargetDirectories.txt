@@ -1,0 +1,3 @@
+C:/Users/kacpe/Desktop/Studia/Sztuczna Inteligencja/ISD/software/pc/neural_network_C/cmake-build-debug/CMakeFiles/neuralNetwork.dir
+C:/Users/kacpe/Desktop/Studia/Sztuczna Inteligencja/ISD/software/pc/neural_network_C/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/kacpe/Desktop/Studia/Sztuczna Inteligencja/ISD/software/pc/neural_network_C/cmake-build-debug/CMakeFiles/rebuild_cache.dir
