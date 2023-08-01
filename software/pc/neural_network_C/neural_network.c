@@ -30,7 +30,7 @@ void NN_init(NeuralNetwork *nn) {
     }
 }
 
-void NN_testInit(NeuralNetwork *nn, int initValue) {
+void NN_testInit(NeuralNetwork *nn, float initValue) {
     // set hidden neurons weights on 0
     for (int i = 0; i < HIDDEN_NEURONS_COUNT; ++i) {
         for (int j = 0; j < INPUT_NEURONS_COUNT; ++j) {
@@ -94,7 +94,6 @@ char NN_process_output(NeuralNetwork nn) {
             case 0:
                 return 'n';
             case 1:
-                
                 return 'l';
             case 2:
                 return 's';

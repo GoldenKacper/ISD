@@ -79,7 +79,7 @@ typedef struct DataPacket {
 
 /// init functions
 void NN_init(NeuralNetwork *nn); // initialize a neural network
-void NN_testInit(NeuralNetwork *nn, int initValue); // alternative NN_init for testing
+void NN_testInit(NeuralNetwork *nn, float initValue); // alternative NN_init for testing
 
 
 /// output functions

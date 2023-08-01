@@ -10,12 +10,12 @@ void myWorkshop_5(); // calculate gradient
 void myWorkshop_6(); // learning
 
 int main() {
-//    myWorkshop_1();
+    myWorkshop_1();
 //    myWorkshop_2();
 //    myWorkshop_3();
 //    myWorkshop_4();
 //    myWorkshop_5();
-    myWorkshop_6();
+//    myWorkshop_6();
 
     return 0;
 }
@@ -33,7 +33,7 @@ void myWorkshop_1() {
     // Initialize neuralNetwork
     NeuralNetwork nn;
 //    NN_init(&nn);
-    NN_testInit(&nn, 1);
+    NN_testInit(&nn, 1.f);
 
 //    NN_read_from_text_file(&nn, "../test.txt");
 #pragma endregion neural network and data packet initialized
