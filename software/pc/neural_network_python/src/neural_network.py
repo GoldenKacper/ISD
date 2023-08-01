@@ -1,3 +1,5 @@
+import re
+
 import numpy as np
 
 
@@ -82,6 +84,102 @@ def calculateNeuralNetworkValues(hiddenWeights: list[list[float]], outputsWeight
             value += outputsWeights[i][j] * hiddenNeurons[j]
         value = sigmoid(value)
         outputsNeurons[i] = value
+
+
+# INPUT_NEURONS_COUNT = 6*10, HIDDEN_NEURONS_COUNT = 60, OUTPUT_NEURONS_COUNT = 5,
+# filename - name without extension, for example ("test") | function add extension '.txt'
+#
+# HIDDEN_NEURONS_COUNT = HIDDEN_LAYER_BIAS_COUNT
+# OUTPUT_NEURONS_COUNT = OUTPUTS_LAYER_BIAS_COUNT
+#
+#     float hiddenWeights[HIDDEN_NEURONS_COUNT][INPUT_NEURONS_COUNT];
+#     float outputsWeights[OUTPUT_NEURONS_COUNT][HIDDEN_NEURONS_COUNT];
+#     float hiddenBias[HIDDEN_NEURONS_COUNT];
+#     float outputsBias[OUTPUT_NEURONS_COUNT];
+def NN_save_to_text_file(hiddenWeights: list[list[float]], outputsWeights: list[list[float]],
+                         hiddenBias: list[float], outputsBias: list[float],
+                         INPUT_NEURONS_COUNT: int, HIDDEN_NEURONS_COUNT: int, OUTPUT_NEURONS_COUNT: int,
+                         filename: str) -> None:
+    # init variables
+    file = open("src/" + filename + ".txt", "w")
+
+    # saving neural network's weights and bias
+    # saving hidden weights
+    for i in range(HIDDEN_NEURONS_COUNT):
+        for j in range(INPUT_NEURONS_COUNT):
+            file.write(str(round(hiddenWeights[i][j], 6)) + " ")
+        file.write("\n")
+    file.write("\n")
+
+    # saving outputs weights
+    for i in range(OUTPUT_NEURONS_COUNT):
+        for j in range(HIDDEN_NEURONS_COUNT):
+            file.write(str(round(outputsWeights[i][j], 6)) + " ")
+        file.write("\n")
+    file.write("\n")
+
+    # saving hidden bias
+    for i in range(HIDDEN_NEURONS_COUNT):
+        file.write(str(round(hiddenBias[i], 6)) + " ")
+    file.write("\n\n")
+
+    # saving outputs bias
+    for i in range(OUTPUT_NEURONS_COUNT):
+        file.write(str(round(outputsBias[i], 6)) + " ")
+
+    file.close()
+
+
+# INPUT_NEURONS_COUNT = 6*10, HIDDEN_NEURONS_COUNT = 60, OUTPUT_NEURONS_COUNT = 5,
+# filename - name without extension, for example ("test") | function add extension '.txt'
+#
+# HIDDEN_NEURONS_COUNT = HIDDEN_LAYER_BIAS_COUNT
+# OUTPUT_NEURONS_COUNT = OUTPUTS_LAYER_BIAS_COUNT
+#
+#     float hiddenWeights[HIDDEN_NEURONS_COUNT][INPUT_NEURONS_COUNT];
+#     float outputsWeights[OUTPUT_NEURONS_COUNT][HIDDEN_NEURONS_COUNT];
+#     float hiddenBias[HIDDEN_NEURONS_COUNT];
+#     float outputsBias[OUTPUT_NEURONS_COUNT];
+def NN_read_from_text_file(hiddenWeights: list[list[float]], outputsWeights: list[list[float]],
+                           hiddenBias: list[float], outputsBias: list[float],
+                           INPUT_NEURONS_COUNT: int, HIDDEN_NEURONS_COUNT: int, OUTPUT_NEURONS_COUNT: int,
+                           filename: str) -> None:
+    # init variables
+    file = open("src/" + filename + ".txt", "r")
+
+    # read hidden weights of neural network
+    for i in range(HIDDEN_NEURONS_COUNT):
+        data = file.readline()
+        data_from_line = re.split(" ", data)
+        for j in range(INPUT_NEURONS_COUNT):
+            hiddenWeights[i][j] = float(data_from_line[j])
+
+    data = file.readline()
+
+    # read outputs weights of neural network
+    for i in range(OUTPUT_NEURONS_COUNT):
+        data = file.readline()
+        data_from_line = re.split(" ", data)
+        for j in range(HIDDEN_NEURONS_COUNT):
+            outputsWeights[i][j] = float(data_from_line[j])
+
+    data = file.readline()
+
+    # read hidden bias of neural network
+    data = file.readline()
+    data_from_line = re.split(" ", data)
+    for i in range(HIDDEN_NEURONS_COUNT):
+        hiddenBias[i] = float(data_from_line[i])
+
+    data = file.readline()
+
+    # read outputs bias of neural network
+    data = file.readline()
+    data_from_line = re.split(" ", data)
+    for i in range(OUTPUT_NEURONS_COUNT):
+        outputsBias[i] = float(data_from_line[i])
+
+    file.close()
 
 
 def sigmoid(x: float) -> float:
