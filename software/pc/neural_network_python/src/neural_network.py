@@ -1,6 +1,6 @@
 import re
 
-import numpy as np
+import math
 
 
 # list must contain OUTPUT_NEURONS_COUNT floats (outputsNeurons[OUTPUT_NEURONS_COUNT] -> outputsNeurons[5]) |
@@ -183,7 +183,7 @@ def NN_read_from_text_file(hiddenWeights: list[list[float]], outputsWeights: lis
 
 
 def sigmoid(x: float) -> float:
-    return 1 / (1 + np.exp(-x))
+    return 1 / (1 + math.exp(-x))
 
 # !!! works !!!
 # def testttt(neurons: list[list[float]]) -> None:
