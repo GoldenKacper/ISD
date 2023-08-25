@@ -11,6 +11,7 @@ void myWorkshop_5(); // calculate gradient
 void myWorkshop_6(); // learning
 
 void myWorkshop_7(); // counting lines of all data files
+void myWorkshop_8(); // assigns the data from the file to the variables
 
 int main() {
 //    myWorkshop_1();
@@ -20,7 +21,8 @@ int main() {
 //    myWorkshop_5();
 //    myWorkshop_6();
 
-    myWorkshop_7();
+//    myWorkshop_7();
+    myWorkshop_8();
 
     return 0;
 }
@@ -293,6 +295,41 @@ void myWorkshop_6() {
 }
 
 void myWorkshop_7() {
-    int countedLines = countAllLinesOfDataFiles();
-    printf("%d", countedLines);
+    // init counters
+    int setOfCountedLinesOfFiles[NUMBER_SETS_OF_COUNTED_LINES];
+
+    // line counting without it you can't initialize the variables
+    countLinesOfEachAndAllDataFiles(setOfCountedLinesOfFiles);
+
+    // printing
+    for (int i = 0; i < 6; ++i) {
+        printf("%d\n", setOfCountedLinesOfFiles[i]);
+    }
+}
+
+void myWorkshop_8() {
+    // init counters
+    int setOfCountedLinesOfFiles[NUMBER_SETS_OF_COUNTED_LINES];
+
+    // line counting without it you can't initialize the variables
+    countLinesOfEachAndAllDataFiles(setOfCountedLinesOfFiles);
+
+    // assigning all lines to a separate variable to improve readability
+    int numberOfAllLines = setOfCountedLinesOfFiles[5];
+
+    // init variables
+    DataPacket dataPacket[numberOfAllLines];
+    char expectedValues[numberOfAllLines];
+
+    // reading...
+    bool  readSuccessfully = assignDataFromTheFileToVariables(dataPacket, expectedValues, setOfCountedLinesOfFiles);
+
+    // printing result
+    if (readSuccessfully) {
+        printf("\nSuccessfully read data from files");
+    } else {
+        printf("\nSomething went wrong");
+    }
+
+
 }
