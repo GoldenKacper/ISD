@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "neural_network.h"
+#include "data_reader.h"
 
 
 void myWorkshop_1(); // neural network - forward propagation
@@ -9,13 +10,17 @@ void myWorkshop_4(); // calculate cost function
 void myWorkshop_5(); // calculate gradient
 void myWorkshop_6(); // learning
 
+void myWorkshop_7(); // counting lines of all data files
+
 int main() {
-    myWorkshop_1();
+//    myWorkshop_1();
 //    myWorkshop_2();
 //    myWorkshop_3();
 //    myWorkshop_4();
 //    myWorkshop_5();
 //    myWorkshop_6();
+
+    myWorkshop_7();
 
     return 0;
 }
@@ -285,4 +290,9 @@ void myWorkshop_6() {
     NN_learn(&nn, dataPackets, expectedValues, arraySize, 5);
 
     NN_print(nn);
+}
+
+void myWorkshop_7() {
+    int countedLines = countAllLinesOfDataFiles();
+    printf("%d", countedLines);
 }
