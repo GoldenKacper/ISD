@@ -13,6 +13,9 @@ void myWorkshop_6(); // learning
 void myWorkshop_7(); // counting lines of all data files
 void myWorkshop_8(); // assigns the data from the file to the variables
 
+void learnTest_1(); // short general tests of learning neural network with all additions
+void forwardPropagationTest_1(); //short test for forward propagation with real data and result
+
 int main() {
 //    myWorkshop_1();
 //    myWorkshop_2();
@@ -22,7 +25,11 @@ int main() {
 //    myWorkshop_6();
 
 //    myWorkshop_7();
-    myWorkshop_8();
+//    myWorkshop_8();
+
+    learnTest_1();
+
+    forwardPropagationTest_1();
 
     return 0;
 }
@@ -270,7 +277,7 @@ void myWorkshop_6() {
     NeuralNetwork nn;
     NN_testInit(&nn, 1);
 
-    int arraySize = 1000; // max value is 8256 but I don't know why
+    int arraySize = 8000; // max value is 8256 but I don't know why
     DataPacket dataPackets[arraySize];
     char expectedValues[arraySize];
 
@@ -318,18 +325,104 @@ void myWorkshop_8() {
     int numberOfAllLines = setOfCountedLinesOfFiles[5];
 
     // init variables
-    DataPacket dataPacket[numberOfAllLines];
+    DataPacket dataPackets[numberOfAllLines];
     char expectedValues[numberOfAllLines];
 
     // reading...
-    bool  readSuccessfully = assignDataFromTheFileToVariables(dataPacket, expectedValues, setOfCountedLinesOfFiles);
+    bool  readSuccessfully = assignDataFromTheFileToVariables(dataPackets, expectedValues, setOfCountedLinesOfFiles);
 
-    // printing result
+    // printing results
     if (readSuccessfully) {
-        printf("\nSuccessfully read data from files");
+        printf("\nSuccessfully read data from files\n\n");
     } else {
-        printf("\nSomething went wrong");
+        printf("\nSomething went wrong\n\n");
     }
 
+    printf("%d\n", numberOfAllLines);
+    dataPacket_print(dataPackets[8110]);
+    expectedValue_print(expectedValues[8110]);
+}
 
+void learnTest_1() {
+    // init counters
+    int setOfCountedLinesOfFiles[NUMBER_SETS_OF_COUNTED_LINES];
+
+    // line counting without it you can't initialize the variables
+    countLinesOfEachAndAllDataFiles(setOfCountedLinesOfFiles);
+
+    // assigning all lines to a separate variable to improve readability
+    int numberOfAllLines = setOfCountedLinesOfFiles[5];
+
+    // init variables
+    DataPacket dataPackets[numberOfAllLines];
+    char expectedValues[numberOfAllLines];
+
+    // reading...
+    bool  readSuccessfully = assignDataFromTheFileToVariables(dataPackets, expectedValues, setOfCountedLinesOfFiles);
+
+    // printing results
+    if (readSuccessfully) {
+        printf("\nSuccessfully read data from files\n\n");
+    } else {
+        printf("\nSomething went wrong\n\n");
+    }
+
+    // create variables needed for neural network
+    NeuralNetwork nn;
+    //NN_read_from_text_file(&nn, "../neuralNetwork.txt");
+
+
+    NN_init(&nn);
+    // printing randomly selected network
+    NN_print(nn);
+
+
+    // learning
+    NN_learn(&nn, dataPackets, expectedValues, numberOfAllLines-2, 5); //  numberOfAllLines-2 because
+
+    // printing result
+    NN_print(nn);
+
+    NN_save_to_text_file(nn, "../neuralNetwork.txt");
+}
+
+void forwardPropagationTest_1() {
+    NeuralNetwork nn;
+    NN_read_from_text_file(&nn, "../neuralNetwork.txt");
+
+    // init counters
+    int setOfCountedLinesOfFiles[NUMBER_SETS_OF_COUNTED_LINES];
+
+    // line counting without it you can't initialize the variables
+    countLinesOfEachAndAllDataFiles(setOfCountedLinesOfFiles);
+
+    // assigning all lines to a separate variable to improve readability
+    int numberOfAllLines = setOfCountedLinesOfFiles[5];
+
+    // init variables
+    DataPacket dataPackets[numberOfAllLines];
+    char expectedValues[numberOfAllLines];
+
+    // reading...
+    bool  readSuccessfully = assignDataFromTheFileToVariables(dataPackets, expectedValues, setOfCountedLinesOfFiles);
+
+    // printing results
+    if (readSuccessfully) {
+        printf("\nSuccessfully read data from files\n\n");
+    } else {
+        printf("\nSomething went wrong\n\n");
+    }
+
+    calculateNeuralNetworkValues(&nn, dataPackets[0]);
+
+    // showing weights and bias
+    NN_print(nn);
+
+    // showing inputs neurons values
+    NN_neurons_values_print(nn);
+
+    // showing the decision of network
+    NN_process_output_print(nn);
+
+    expectedValue_print(expectedValues[0]);
 }

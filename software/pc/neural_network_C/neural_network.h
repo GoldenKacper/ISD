@@ -69,7 +69,7 @@ typedef struct Gradient {
 } Gradient;
 
 typedef struct DataFrame {
-    uint16_t x[DATA_FRAME_SIZE];
+    short x[DATA_FRAME_SIZE];
 } DataFrame;
 
 typedef struct DataPacket {
@@ -117,6 +117,7 @@ void NN_print(NeuralNetwork nn); // printing neural network's weights and bias
 void NN_neurons_values_print(NeuralNetwork nn); // printing neural network's neurons values
 void NN_process_output_print(NeuralNetwork nn); // printing neural network output decision (char)
 void gradient_print(Gradient gradient); // printing gradient's values
+
 
 
 /// math functions

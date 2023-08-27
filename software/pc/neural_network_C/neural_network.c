@@ -550,7 +550,7 @@ float dSigmoid(float x) {
 }
 
 float calculateDeltaChangingValue(float newGradientsValue, float previousGradientsValue) {
-    return (float) ((LEARNING_RATE * newGradientsValue) + (MOMENTUM * previousGradientsValue));
+    return - (float) ((LEARNING_RATE * newGradientsValue) + (MOMENTUM * previousGradientsValue)); // TODO delete '-'
 }
 
 void NN_modify_values(NeuralNetwork *nn, Gradient *gradient) {
