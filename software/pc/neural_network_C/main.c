@@ -16,6 +16,9 @@ void myWorkshop_8(); // assigns the data from the file to the variables
 void learnTest_1(); // short general tests of learning neural network with all additions
 void forwardPropagationTest_1(); //short test for forward propagation with real data and result
 
+/// General function used to train Neural Network
+void trainNeuralNetwork(); //
+
 
 int main() {
 //    myWorkshop_1();
@@ -30,8 +33,10 @@ int main() {
 
 //    learnTest_1();
 
-    forwardPropagationTest_1();
+//    forwardPropagationTest_1();
 
+/// Only this function should be uncomment
+    trainNeuralNetwork();
 
     return 0;
 }
@@ -55,7 +60,6 @@ void myWorkshop_1() {
 #pragma endregion neural network and data packet initialized
 
     calculateNeuralNetworkValues(&nn, dataPacket);
-
 
 
 #pragma region printing data
@@ -308,7 +312,8 @@ void myWorkshop_7() {
     int setOfCountedLinesOfFiles[NUMBER_SETS_OF_COUNTED_LINES];
 
     // line counting without it you can't initialize the variables
-    countLinesOfEachDataFiles(setOfCountedLinesOfFiles, TRAINING_FLAG); // when I did this I don't have testing files but in this place should be TESTING_FLAG
+    countLinesOfEachDataFiles(setOfCountedLinesOfFiles,
+                              TRAINING_FLAG); // when I did this I don't have testing files but in this place should be TESTING_FLAG
 
     // printing
     for (int i = 0; i < 6; ++i) {
@@ -321,7 +326,8 @@ void myWorkshop_8() {
     int setOfCountedLinesOfFiles[NUMBER_SETS_OF_COUNTED_LINES];
 
     // line counting without it you can't initialize the variables
-    countLinesOfEachDataFiles(setOfCountedLinesOfFiles, TRAINING_FLAG); // when I did this I don't have testing files but in this place should be TESTING_FLAG
+    countLinesOfEachDataFiles(setOfCountedLinesOfFiles,
+                              TRAINING_FLAG); // when I did this I don't have testing files but in this place should be TESTING_FLAG
 
     // assigning all lines to a separate variable to improve readability
     int numberOfAllLines = setOfCountedLinesOfFiles[5];
@@ -331,7 +337,8 @@ void myWorkshop_8() {
     char expectedValues[numberOfAllLines];
 
     // reading...
-    bool  readSuccessfully = assignDataFromTheFileToVariables(dataPackets, expectedValues, TRAINING_FLAG); // when I did this I don't have testing files but in this place should be TESTING_FLAG
+    bool readSuccessfully = assignDataFromTheFileToVariables(dataPackets, expectedValues,
+                                                             TRAINING_FLAG); // when I did this I don't have testing files but in this place should be TESTING_FLAG
 
     // printing results
     if (readSuccessfully) {
@@ -360,7 +367,8 @@ void learnTest_1() {
     char expectedValues[numberOfAllLines];
 
     // reading...
-    bool  readSuccessfully = assignDataFromTheFileToVariables(dataPackets, expectedValues, TRAINING_FLAG); // for learning has to be TRAINING_FLAG
+    bool readSuccessfully = assignDataFromTheFileToVariables(dataPackets, expectedValues,
+                                                             TRAINING_FLAG); // for learning has to be TRAINING_FLAG
 
     // printing results
     if (readSuccessfully) {
@@ -380,7 +388,7 @@ void learnTest_1() {
 
 
     // learning
-    NN_learn(&nn, dataPackets, expectedValues, numberOfAllLines-2, 5); //  numberOfAllLines-2 because
+    NN_learn(&nn, dataPackets, expectedValues, numberOfAllLines - 2, 5); //  numberOfAllLines-2 because
 
     // printing result
     NN_print(nn);
@@ -398,7 +406,7 @@ void forwardPropagationTest_1() {
     char expectedValues[numberOfAllLines];
 
     // reading...
-    bool  readSuccessfully = assignDataFromTheFileToVariables(dataPackets, expectedValues, TESTING_FLAG);
+    bool readSuccessfully = assignDataFromTheFileToVariables(dataPackets, expectedValues, TESTING_FLAG);
 
     // printing results
     if (readSuccessfully) {
@@ -418,8 +426,117 @@ void forwardPropagationTest_1() {
     // showing the decision of network
     NN_process_output_print(nn);
 
-    dataPacket_print(dataPackets[0]);
-    expectedValue_print(expectedValues[0]);
+    dataPacket_print(dataPackets[20]);
+    expectedValue_print(expectedValues[20]);
 
     testNeuralNetworkKnowledge(&nn, dataPackets, expectedValues, numberOfAllLines);
+}
+
+
+void trainNeuralNetwork() {
+#pragma region Training section
+
+    // init counters
+    int setOfCountedLinesOfFiles[NUMBER_SETS_OF_COUNTED_LINES];
+
+    // line counting without it you can't initialize the variables
+    countLinesOfEachDataFiles(setOfCountedLinesOfFiles, TRAINING_FLAG); // for learning has to be TRAINING_FLAG
+
+    // assigning all lines to a separate variable to improve readability
+    int numberOfAllLines = setOfCountedLinesOfFiles[5];
+
+    // init data variables
+    DataPacket trainingDataPackets[numberOfAllLines];
+    char trainingExpectedValues[numberOfAllLines];
+
+    // reading... save data from file into trainingDataPackets and trainingExpectedValues
+    bool readSuccessfully = assignDataFromTheFileToVariables(trainingDataPackets, trainingExpectedValues,
+                                                             TRAINING_FLAG); // for learning has to be TRAINING_FLAG
+
+    // printing reading's results
+    if (readSuccessfully) {
+        printf("\nSuccessfully read data from files\n\n");
+    } else {
+        printf("\nSomething went wrong\n\n");
+    }
+
+    // create epochs number
+    int epochsNumber = 7; // enter the epochs number
+
+    // create neural network
+    NeuralNetwork nn;
+
+    // NN_init(&nn); // first run require to use this function | Warning - this function will reset all progress! but if the network is not saved, nothing will happen
+
+    // reading neural network from file (reading progress)
+    NN_read_from_text_file(&nn, "../neuralNetwork.txt"); // every subsequent startup must be with this function
+
+    // printing randomly selected network
+    //NN_print(nn); // used to see the neural network right after drawing the weights and bias | after first run should be commented
+
+    // learning... | most important function
+    NN_learn(&nn, trainingDataPackets, trainingExpectedValues, numberOfAllLines - 2, epochsNumber); //  numberOfAllLines-2 because
+
+    // printing neural network to see the learning results
+    NN_print(nn); // used to see the neural network's weights and bias right after learning function
+
+    // saving neural network into file (saving progress)
+    // ! Warning ! - wrong use may result in writing incorrect data to the file and thus destroying the neural network
+    NN_save_to_text_file(nn, "../neuralNetwork.txt"); // if you want to save the learning effect it should be used
+
+#pragma endregion
+
+#pragma region Mechanical Testing section
+
+    // count new number of all lines for testing files
+    numberOfAllLines = countSumOfLinesAllEDataFiles(TESTING_FLAG);
+
+    // create new variables for dataPackets and expectedValues for testing
+    DataPacket testingDataPackets[numberOfAllLines];
+    char testingExpectedValues[numberOfAllLines];
+
+    // reading... save data from file into trainingDataPackets and trainingExpectedValues
+    readSuccessfully = assignDataFromTheFileToVariables(testingDataPackets, testingExpectedValues, TESTING_FLAG);
+
+    // printing reading's results
+    if (readSuccessfully) {
+        printf("\nSuccessfully read data from files\n\n");
+    } else {
+        printf("\nSomething went wrong\n\n");
+    }
+
+    // the most important function for testing
+    // tests the network on a test set and displays the detailed report
+    testNeuralNetworkKnowledge(&nn, testingDataPackets, testingExpectedValues, numberOfAllLines);
+
+#pragma endregion
+
+#pragma region Manual Testing section
+
+    // ! Important !
+    // It can only be done after the 'Mechanical Testing section'
+    // because the variables are prepared there for testing
+
+    // create one variable
+    int exampleNumber = 0; // enter the sample number for the manual test
+
+    // calculate neural network for given example
+    calculateNeuralNetworkValues(&nn, trainingDataPackets[exampleNumber]);
+
+    // <-- These functions will allow you to carefully analyze the given example and compare the result with the expected one
+    // showing weights and bias
+    //NN_print(nn); // uncomment for more detailed information
+
+    // showing inputs neurons values
+    NN_neurons_values_print(nn);
+
+    // showing the decision of network
+    NN_process_output_print(nn);
+
+    // showing dataPacket and expectedValue
+    dataPacket_print(trainingDataPackets[exampleNumber]);
+    expectedValue_print(trainingExpectedValues[exampleNumber]);
+    // --> End showing section
+
+#pragma endregion
 }

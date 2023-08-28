@@ -11,8 +11,9 @@ void countLinesOfEachDataFiles(int *setOfCountedLinesOfFiles, int flag) {
                                       {"../../data/2 - siedzenie stanie testowanie.txt"},
                                       {"../../data/3 - chodzenie testowanie.txt"},
                                       {"../../data/4 - bieganie testowanie.txt"}};
+    /// IMPORTANT - if you are adding or removing a state, add it accordingly to these 2 variables at the top
     // IMPORTANT - the order of the files given for reading must match the order of the variables in the setOfCountedLinesOfFiles table
-    int filesNumber = 4; //
+    int filesNumber = 4; /// IMPORTANT - if you are adding or removing a state, modify accordingly this variable
 
     int counterAllFileLines = 1;
     int counterSingleFileLines = 1;
@@ -48,7 +49,7 @@ void countLinesOfEachDataFiles(int *setOfCountedLinesOfFiles, int flag) {
         setOfCountedLinesOfFiles[i] = counterSingleFileLines;
         counterSingleFileLines = 1;
     }
-    setOfCountedLinesOfFiles[4] = 0; // because we dont have this file
+    setOfCountedLinesOfFiles[4] = 0; /// IMPORTANT - if you are adding this state, comment this variable // because we dont have this file
     setOfCountedLinesOfFiles[5] = counterAllFileLines;
 }
 
@@ -71,8 +72,11 @@ bool assignDataFromTheFileToVariables(DataPacket *dataPackets, char *expectedVal
                                       {"../../data/2 - siedzenie stanie testowanie.txt"},
                                       {"../../data/3 - chodzenie testowanie.txt"},
                                       {"../../data/4 - bieganie testowanie.txt"}};
+    /// IMPORTANT - if you are adding or removing a state, add it accordingly to these 2 variables at the top
+    // IMPORTANT - the order of the files given for reading must match the order of the variables in the setOfCountedLinesOfFiles table
+
     // init counters
-    int filesNumber = 4;
+    int filesNumber = 4; /// IMPORTANT - if you are adding or removing a state, modify accordingly this variable
     int linesCounter = 0;
     int setOfCountedLinesOfFiles[NUMBER_SETS_OF_COUNTED_LINES];
 
@@ -105,11 +109,9 @@ bool assignDataFromTheFileToVariables(DataPacket *dataPackets, char *expectedVal
                 return false;
             }
         }
-
         // Close the file
         fclose(fptr);
     }
-
     return true;
 }
 
@@ -127,6 +129,9 @@ void assigningDataToExpectedValues(char *expectedValues, int packetNumber, int i
             break;
         case 3:
             expectedValues[index] = 'r';
+            break;
+        case 4:
+            expectedValues[index] = 'n';
             break;
     }
 }

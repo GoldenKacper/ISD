@@ -904,7 +904,7 @@ testNeuralNetworkKnowledge(NeuralNetwork *nn, DataPacket *dataPacket, char *expe
     printf("Incorrect Tests: %d\n", dataPacketsNumber - correctValues);
     printf("All Tests: %d\n", dataPacketsNumber);
     printf("Percentage Correctness: %f %\n", percentCorrectness);
-    printf("Average Cost Vector Value: %f\n", avgCostVectorValue);
+    printf("Average Cost Vector Value: %f\n\n", avgCostVectorValue);
 }
 
 
