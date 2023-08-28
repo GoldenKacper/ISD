@@ -550,7 +550,8 @@ float dSigmoid(float x) {
 }
 
 float calculateDeltaChangingValue(float newGradientsValue, float previousGradientsValue) {
-    return - (float) ((LEARNING_RATE * newGradientsValue) + (MOMENTUM * previousGradientsValue)); // TODO delete '-'
+    return -(float) ((LEARNING_RATE * newGradientsValue) +
+                     (MOMENTUM * previousGradientsValue)); // Added '-' because is needed negative gradient
 }
 
 void NN_modify_values(NeuralNetwork *nn, Gradient *gradient) {
@@ -866,6 +867,44 @@ void cloneExpValues(char *cloneExpectedValues, const char *expectedValues, int d
     for (int i = 0; i < dp_size; ++i) {
         cloneExpectedValues[i] = expectedValues[i];
     }
+}
+
+void
+testNeuralNetworkKnowledge(NeuralNetwork *nn, DataPacket *dataPacket, char *expectedValues, int dataPacketsNumber) {
+    char result;
+    int correctValues = 0;
+    float percentCorrectness = 0.f;
+
+    float expValAsFloats[OUTPUT_NEURONS_COUNT];
+    float costVector[OUTPUT_NEURONS_COUNT];
+    float avgCostVectorValue = 0.f;
+    float tempCostVectorValue = 0.f;
+
+    dataPacketsNumber -= 1; // because during reading data from file, program don't read files' last line
+
+    for (int i = 0; i < dataPacketsNumber; ++i) {
+        calculateNeuralNetworkValues(nn, dataPacket[i]);
+        result = NN_process_output(*nn);
+        if (result == expectedValues[i]) {
+            correctValues++;
+        }
+
+        convertExpVal(expValAsFloats, expectedValues[i]);
+        costFunctionVector(costVector, nn, expValAsFloats, OUTPUT_NEURONS_COUNT);
+        tempCostVectorValue = totalCostFunctionValue(costVector, OUTPUT_NEURONS_COUNT);
+        avgCostVectorValue += tempCostVectorValue;
+        ///printf("Temporary Cost Vector Value: %d = %f\n", i, tempCostVectorValue); /// uncomment for more accurate calculations
+    }
+    if (dataPacketsNumber != 0) {
+        percentCorrectness = ((float) correctValues / (float) dataPacketsNumber) * 100.f;
+    }
+    avgCostVectorValue /= dataPacketsNumber;
+
+    printf("Correct Tests: %d\n", correctValues);
+    printf("Incorrect Tests: %d\n", dataPacketsNumber - correctValues);
+    printf("All Tests: %d\n", dataPacketsNumber);
+    printf("Percentage Correctness: %f %\n", percentCorrectness);
+    printf("Average Cost Vector Value: %f\n", avgCostVectorValue);
 }
 
 

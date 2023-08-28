@@ -1,10 +1,16 @@
 #include "data_reader.h"
 
-void countLinesOfEachAndAllDataFiles(int *setOfCountedLinesOfFiles) {
-    const char files[4][50] = {{"../../data/1 - lezenie.txt"},
-                               {"../../data/2 - siedzenie stanie.txt"},
-                               {"../../data/3 - chodzenie.txt"},
-                               {"../../data/4 - bieganie.txt"}};
+
+void countLinesOfEachDataFiles(int *setOfCountedLinesOfFiles, int flag) {
+    const char trainingFiles[4][50] = {{"../../data/1 - lezenie.txt"},
+                                       {"../../data/2 - siedzenie stanie.txt"},
+                                       {"../../data/3 - chodzenie.txt"},
+                                       {"../../data/4 - bieganie.txt"}};
+
+    const char testingFiles[4][50] = {{"../../data/1 - lezenie testowanie.txt"},
+                                      {"../../data/2 - siedzenie stanie testowanie.txt"},
+                                      {"../../data/3 - chodzenie testowanie.txt"},
+                                      {"../../data/4 - bieganie testowanie.txt"}};
     // IMPORTANT - the order of the files given for reading must match the order of the variables in the setOfCountedLinesOfFiles table
     int filesNumber = 4; //
 
@@ -14,12 +20,15 @@ void countLinesOfEachAndAllDataFiles(int *setOfCountedLinesOfFiles) {
     FILE *fptr;
 
     for (int i = 0; i < filesNumber; ++i) {
-
-        // Open a file in read mode
-        fptr = fopen(files[i], "r");
+        if (flag == 0){
+            // Open a file in read mode
+            fptr = fopen(trainingFiles[i], "r");
+        } else if (flag == 1){
+            // Open a file in read mode
+            fptr = fopen(testingFiles[i], "r");
+        }
 
         char c;
-
         // If the file exist
         if (fptr != NULL) {
             // Extract characters from file and store in character c
@@ -43,19 +52,43 @@ void countLinesOfEachAndAllDataFiles(int *setOfCountedLinesOfFiles) {
     setOfCountedLinesOfFiles[5] = counterAllFileLines;
 }
 
-bool assignDataFromTheFileToVariables(DataPacket *dataPackets, char *expectedValues, int *setOfCountedLinesOfFiles) {
-    const char files[4][50] = {{"../../data/1 - lezenie.txt"},
-                               {"../../data/2 - siedzenie stanie.txt"},
-                               {"../../data/3 - chodzenie.txt"},
-                               {"../../data/4 - bieganie.txt"}};
-    int filesNumber = 4; //
+int countSumOfLinesAllEDataFiles(int flag) {
+    int setOfCountedLinesOfFiles[NUMBER_SETS_OF_COUNTED_LINES];
+
+    // line counting without it you can't initialize the variables
+    countLinesOfEachDataFiles(setOfCountedLinesOfFiles, flag);
+
+    return setOfCountedLinesOfFiles[5];
+}
+
+bool assignDataFromTheFileToVariables(DataPacket *dataPackets, char *expectedValues, int flag) {
+    const char trainingFiles[4][50] = {{"../../data/1 - lezenie.txt"},
+                                       {"../../data/2 - siedzenie stanie.txt"},
+                                       {"../../data/3 - chodzenie.txt"},
+                                       {"../../data/4 - bieganie.txt"}};
+
+    const char testingFiles[4][50] = {{"../../data/1 - lezenie testowanie.txt"},
+                                      {"../../data/2 - siedzenie stanie testowanie.txt"},
+                                      {"../../data/3 - chodzenie testowanie.txt"},
+                                      {"../../data/4 - bieganie testowanie.txt"}};
+    // init counters
+    int filesNumber = 4;
     int linesCounter = 0;
+    int setOfCountedLinesOfFiles[NUMBER_SETS_OF_COUNTED_LINES];
+
+    // line counting without it you can't initialize the variables
+    countLinesOfEachDataFiles(setOfCountedLinesOfFiles, flag);
 
     FILE *fptr;
 
     for (int packetNumber = 0; packetNumber < filesNumber; ++packetNumber) {
-        // Open a file in read mode
-        fptr = fopen(files[packetNumber], "r");
+        if (flag == 0){
+            // Open a file in read mode
+            fptr = fopen(trainingFiles[packetNumber], "r");
+        } else if (flag == 1){
+            // Open a file in read mode
+            fptr = fopen(testingFiles[packetNumber], "r");
+        }
 
         char singleLine[255];
 

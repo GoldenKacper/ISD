@@ -16,6 +16,7 @@ void myWorkshop_8(); // assigns the data from the file to the variables
 void learnTest_1(); // short general tests of learning neural network with all additions
 void forwardPropagationTest_1(); //short test for forward propagation with real data and result
 
+
 int main() {
 //    myWorkshop_1();
 //    myWorkshop_2();
@@ -27,9 +28,10 @@ int main() {
 //    myWorkshop_7();
 //    myWorkshop_8();
 
-    learnTest_1();
+//    learnTest_1();
 
     forwardPropagationTest_1();
+
 
     return 0;
 }
@@ -306,7 +308,7 @@ void myWorkshop_7() {
     int setOfCountedLinesOfFiles[NUMBER_SETS_OF_COUNTED_LINES];
 
     // line counting without it you can't initialize the variables
-    countLinesOfEachAndAllDataFiles(setOfCountedLinesOfFiles);
+    countLinesOfEachDataFiles(setOfCountedLinesOfFiles, TRAINING_FLAG); // when I did this I don't have testing files but in this place should be TESTING_FLAG
 
     // printing
     for (int i = 0; i < 6; ++i) {
@@ -319,7 +321,7 @@ void myWorkshop_8() {
     int setOfCountedLinesOfFiles[NUMBER_SETS_OF_COUNTED_LINES];
 
     // line counting without it you can't initialize the variables
-    countLinesOfEachAndAllDataFiles(setOfCountedLinesOfFiles);
+    countLinesOfEachDataFiles(setOfCountedLinesOfFiles, TRAINING_FLAG); // when I did this I don't have testing files but in this place should be TESTING_FLAG
 
     // assigning all lines to a separate variable to improve readability
     int numberOfAllLines = setOfCountedLinesOfFiles[5];
@@ -329,7 +331,7 @@ void myWorkshop_8() {
     char expectedValues[numberOfAllLines];
 
     // reading...
-    bool  readSuccessfully = assignDataFromTheFileToVariables(dataPackets, expectedValues, setOfCountedLinesOfFiles);
+    bool  readSuccessfully = assignDataFromTheFileToVariables(dataPackets, expectedValues, TRAINING_FLAG); // when I did this I don't have testing files but in this place should be TESTING_FLAG
 
     // printing results
     if (readSuccessfully) {
@@ -348,7 +350,7 @@ void learnTest_1() {
     int setOfCountedLinesOfFiles[NUMBER_SETS_OF_COUNTED_LINES];
 
     // line counting without it you can't initialize the variables
-    countLinesOfEachAndAllDataFiles(setOfCountedLinesOfFiles);
+    countLinesOfEachDataFiles(setOfCountedLinesOfFiles, TRAINING_FLAG); // for learning has to be TRAINING_FLAG
 
     // assigning all lines to a separate variable to improve readability
     int numberOfAllLines = setOfCountedLinesOfFiles[5];
@@ -358,7 +360,7 @@ void learnTest_1() {
     char expectedValues[numberOfAllLines];
 
     // reading...
-    bool  readSuccessfully = assignDataFromTheFileToVariables(dataPackets, expectedValues, setOfCountedLinesOfFiles);
+    bool  readSuccessfully = assignDataFromTheFileToVariables(dataPackets, expectedValues, TRAINING_FLAG); // for learning has to be TRAINING_FLAG
 
     // printing results
     if (readSuccessfully) {
@@ -387,24 +389,16 @@ void learnTest_1() {
 }
 
 void forwardPropagationTest_1() {
+    // init variables
     NeuralNetwork nn;
     NN_read_from_text_file(&nn, "../neuralNetwork.txt");
 
-    // init counters
-    int setOfCountedLinesOfFiles[NUMBER_SETS_OF_COUNTED_LINES];
-
-    // line counting without it you can't initialize the variables
-    countLinesOfEachAndAllDataFiles(setOfCountedLinesOfFiles);
-
-    // assigning all lines to a separate variable to improve readability
-    int numberOfAllLines = setOfCountedLinesOfFiles[5];
-
-    // init variables
+    int numberOfAllLines = countSumOfLinesAllEDataFiles(TESTING_FLAG);
     DataPacket dataPackets[numberOfAllLines];
     char expectedValues[numberOfAllLines];
 
     // reading...
-    bool  readSuccessfully = assignDataFromTheFileToVariables(dataPackets, expectedValues, setOfCountedLinesOfFiles);
+    bool  readSuccessfully = assignDataFromTheFileToVariables(dataPackets, expectedValues, TESTING_FLAG);
 
     // printing results
     if (readSuccessfully) {
@@ -424,5 +418,8 @@ void forwardPropagationTest_1() {
     // showing the decision of network
     NN_process_output_print(nn);
 
+    dataPacket_print(dataPackets[0]);
     expectedValue_print(expectedValues[0]);
+
+    testNeuralNetworkKnowledge(&nn, dataPackets, expectedValues, numberOfAllLines);
 }
