@@ -14,10 +14,10 @@ void myWorkshop_7(); // counting lines of all data files
 void myWorkshop_8(); // assigns the data from the file to the variables
 
 void learnTest_1(); // short general tests of learning neural network with all additions
-void forwardPropagationTest_1(); //short test for forward propagation with real data and result
 
-/// General function used to train Neural Network
-void trainNeuralNetwork(); //
+/// General functions used to train Neural Network
+void forwardPropagation(); // forward propagation with real data and results | Use for manual testing
+void trainNeuralNetwork(); // training neural network with real data and results
 
 
 int main() {
@@ -33,9 +33,8 @@ int main() {
 
 //    learnTest_1();
 
-//    forwardPropagationTest_1();
-
-/// Only this function should be uncomment
+/// Only one of these functions should be uncomment
+//    forwardPropagation();
     trainNeuralNetwork();
 
     return 0;
@@ -396,7 +395,7 @@ void learnTest_1() {
     NN_save_to_text_file(nn, "../neuralNetwork.txt");
 }
 
-void forwardPropagationTest_1() {
+void forwardPropagation() {
     // init variables
     NeuralNetwork nn;
     NN_read_from_text_file(&nn, "../neuralNetwork.txt");
@@ -404,6 +403,9 @@ void forwardPropagationTest_1() {
     int numberOfAllLines = countSumOfLinesAllEDataFiles(TESTING_FLAG);
     DataPacket dataPackets[numberOfAllLines];
     char expectedValues[numberOfAllLines];
+
+    // create one variable
+    int exampleNumber = 4; // enter the sample number for the manual test
 
     // reading...
     bool readSuccessfully = assignDataFromTheFileToVariables(dataPackets, expectedValues, TESTING_FLAG);
@@ -415,7 +417,7 @@ void forwardPropagationTest_1() {
         printf("\nSomething went wrong\n\n");
     }
 
-    calculateNeuralNetworkValues(&nn, dataPackets[20]);
+    calculateNeuralNetworkValues(&nn, dataPackets[exampleNumber]);
 
     // showing weights and bias
     NN_print(nn);
@@ -426,8 +428,8 @@ void forwardPropagationTest_1() {
     // showing the decision of network
     NN_process_output_print(nn);
 
-    dataPacket_print(dataPackets[20]);
-    expectedValue_print(expectedValues[20]);
+    dataPacket_print(dataPackets[exampleNumber]);
+    expectedValue_print(expectedValues[exampleNumber]);
 
     testNeuralNetworkKnowledge(&nn, dataPackets, expectedValues, numberOfAllLines);
 }
@@ -461,7 +463,7 @@ void trainNeuralNetwork() {
     }
 
     // create epochs number
-    int epochsNumber = 1; // enter the epochs number
+    int epochsNumber = 30; // enter the epochs number
 
     // create neural network
     NeuralNetwork nn;
