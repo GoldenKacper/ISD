@@ -415,7 +415,7 @@ void forwardPropagationTest_1() {
         printf("\nSomething went wrong\n\n");
     }
 
-    calculateNeuralNetworkValues(&nn, dataPackets[0]);
+    calculateNeuralNetworkValues(&nn, dataPackets[20]);
 
     // showing weights and bias
     NN_print(nn);
@@ -461,7 +461,7 @@ void trainNeuralNetwork() {
     }
 
     // create epochs number
-    int epochsNumber = 7; // enter the epochs number
+    int epochsNumber = 1; // enter the epochs number
 
     // create neural network
     NeuralNetwork nn;
@@ -521,7 +521,7 @@ void trainNeuralNetwork() {
     int exampleNumber = 0; // enter the sample number for the manual test
 
     // calculate neural network for given example
-    calculateNeuralNetworkValues(&nn, trainingDataPackets[exampleNumber]);
+    calculateNeuralNetworkValues(&nn, testingDataPackets[exampleNumber]);
 
     // <-- These functions will allow you to carefully analyze the given example and compare the result with the expected one
     // showing weights and bias
@@ -534,8 +534,8 @@ void trainNeuralNetwork() {
     NN_process_output_print(nn);
 
     // showing dataPacket and expectedValue
-    dataPacket_print(trainingDataPackets[exampleNumber]);
-    expectedValue_print(trainingExpectedValues[exampleNumber]);
+    dataPacket_print(testingDataPackets[exampleNumber]);
+    expectedValue_print(testingExpectedValues[exampleNumber]);
     // --> End showing section
 
 #pragma endregion
