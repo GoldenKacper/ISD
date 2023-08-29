@@ -405,7 +405,7 @@ void forwardPropagation() {
     char expectedValues[numberOfAllLines];
 
     // create one variable
-    int exampleNumber = 4; // enter the sample number for the manual test
+    int exampleNumber = 0; // enter the sample number for the manual test
 
     // reading...
     bool readSuccessfully = assignDataFromTheFileToVariables(dataPackets, expectedValues, TESTING_FLAG);
@@ -463,7 +463,7 @@ void trainNeuralNetwork() {
     }
 
     // create epochs number
-    int epochsNumber = 19; // enter the epochs number
+    int epochsNumber = 30; // enter the epochs number
 
     // create neural network
     NeuralNetwork nn;
