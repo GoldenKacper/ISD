@@ -44,3 +44,5 @@
 3	147	7151148332389373	CMakeFiles/neuralNetwork.dir/main.c.obj	9561fb1f37beb4de
 6	184	7151148332759413	CMakeFiles/neuralNetwork.dir/neural_network.c.obj	db1684495c170090
 184	308	7151148333949505	neuralNetwork.exe	39c48d6864e1a325
+2	150	7151167992327782	CMakeFiles/neuralNetwork.dir/main.c.obj	9561fb1f37beb4de
+150	284	7151167993627879	neuralNetwork.exe	39c48d6864e1a325
