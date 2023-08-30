@@ -226,11 +226,84 @@ def workshop_5() -> None:
         for j in range(DATA_FRAME_SIZE):
             dataPacket[i].append(1)
 
+
+    # Added because I have to make few tests and compare it with results in neural network in C
+
+    # dataPacket[0][0] = -1
+    # dataPacket[0][1] = 1
+    # dataPacket[0][2] = 0
+    # dataPacket[0][3] = -1
+    # dataPacket[0][4] = 0
+    # dataPacket[0][5] = 1
+    #
+    # dataPacket[1][0] = -1
+    # dataPacket[1][1] = 2
+    # dataPacket[1][2] = 0
+    # dataPacket[1][3] = -1
+    # dataPacket[1][4] = 0
+    # dataPacket[1][5] = 1
+    #
+    # dataPacket[2][0] = -1
+    # dataPacket[2][1] = 2
+    # dataPacket[2][2] = 0
+    # dataPacket[2][3] = -1
+    # dataPacket[2][4] = 0
+    # dataPacket[2][5] = 1
+    #
+    # dataPacket[3][0] = -1
+    # dataPacket[3][1] = 2
+    # dataPacket[3][2] = 0
+    # dataPacket[3][3] = -1
+    # dataPacket[3][4] = 0
+    # dataPacket[3][5] = 1
+    #
+    # dataPacket[4][0] = -1
+    # dataPacket[4][1] = 3
+    # dataPacket[4][2] = 0
+    # dataPacket[4][3] = -1
+    # dataPacket[4][4] = 0
+    # dataPacket[4][5] = 1
+    #
+    # dataPacket[5][0] = -2
+    # dataPacket[5][1] = 3
+    # dataPacket[5][2] = 0
+    # dataPacket[5][3] = -1
+    # dataPacket[5][4] = 0
+    # dataPacket[5][5] = 0
+    #
+    # dataPacket[6][0] = -2
+    # dataPacket[6][1] = 3
+    # dataPacket[6][2] = 0
+    # dataPacket[6][3] = -1
+    # dataPacket[6][4] = 0
+    # dataPacket[6][5] = 1
+    #
+    # dataPacket[7][0] = -2
+    # dataPacket[7][1] = 3
+    # dataPacket[7][2] = 0
+    # dataPacket[7][3] = -1
+    # dataPacket[7][4] = 0
+    # dataPacket[7][5] = 1
+    #
+    # dataPacket[8][0] = -2
+    # dataPacket[8][1] = 2
+    # dataPacket[8][2] = 0
+    # dataPacket[8][3] = -1
+    # dataPacket[8][4] = 0
+    # dataPacket[8][5] = 1
+    #
+    # dataPacket[9][0] = -2
+    # dataPacket[9][1] = 2
+    # dataPacket[9][2] = 0
+    # dataPacket[9][3] = -1
+    # dataPacket[9][4] = 0
+    # dataPacket[9][5] = 1
+
     # } end init
 
     # loading
     NN_read_from_text_file(hiddenWeights, outputsWeights, hiddenBias, outputsBias, INPUT_NEURONS_COUNT,
-                           HIDDEN_NEURONS_COUNT, OUTPUT_NEURONS_COUNT, "text")
+                           HIDDEN_NEURONS_COUNT, OUTPUT_NEURONS_COUNT, "neuralNetwork")
 
     # calculating
     calculateNeuralNetworkValues(hiddenWeights, outputsWeights, hiddenBias, outputsBias, inputsNeurons, hiddenNeurons,
@@ -243,7 +316,7 @@ def workshop_5() -> None:
     # saving
     # we don't have to use this function !!!
     NN_save_to_text_file(hiddenWeights, outputsWeights, hiddenBias, outputsBias, INPUT_NEURONS_COUNT,
-                         HIDDEN_NEURONS_COUNT, OUTPUT_NEURONS_COUNT, "text")
+                         HIDDEN_NEURONS_COUNT, OUTPUT_NEURONS_COUNT, "neuralNetwork")
 
     # showing results
     print("Result: " + result)
