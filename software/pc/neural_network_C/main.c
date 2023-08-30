@@ -463,7 +463,7 @@ void trainNeuralNetwork() {
     }
 
     // create epochs number
-    int epochsNumber = 1; // enter the epochs number
+    int epochsNumber = 5; // enter the epochs number
 
     // create neural network
     NeuralNetwork nn;
