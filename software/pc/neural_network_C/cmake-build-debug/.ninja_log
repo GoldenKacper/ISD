@@ -6,3 +6,5 @@
 9	116	7150988650612452	CMakeFiles/neuralNetwork.dir/data_reader.c.obj	8b38290f1ba5df2e
 9	72	7126017752915692	CMakeFiles/neuralNetwork.dir/neural_network_for_micropython.c.obj	737448d34184e447
 4	58	7126017853608251	CMakeFiles/neuralNetwork.dir/test.c.obj	c2d9df3c4ed44c07
+2	139	7151068053965250	CMakeFiles/neuralNetwork.dir/main.c.obj	9561fb1f37beb4de
+139	251	7151068055055333	neuralNetwork.exe	39c48d6864e1a325
