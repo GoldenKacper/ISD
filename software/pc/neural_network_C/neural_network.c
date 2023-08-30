@@ -887,6 +887,8 @@ testNeuralNetworkKnowledge(NeuralNetwork *nn, DataPacket *dataPacket, char *expe
         result = NN_process_output(*nn);
         if (result == expectedValues[i]) {
             correctValues++;
+        } else {
+            // TODO more diagnostic info
         }
 
         convertExpVal(expValAsFloats, expectedValues[i]);
