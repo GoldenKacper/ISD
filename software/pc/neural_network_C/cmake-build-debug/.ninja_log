@@ -40,3 +40,7 @@
 5	203	7151147822956070	CMakeFiles/neuralNetwork.dir/main.c.obj	9561fb1f37beb4de
 10	251	7151147823466112	CMakeFiles/neuralNetwork.dir/neural_network.c.obj	db1684495c170090
 251	454	7151147825436286	neuralNetwork.exe	39c48d6864e1a325
+9	119	7151148332099362	CMakeFiles/neuralNetwork.dir/data_reader.c.obj	8b38290f1ba5df2e
+3	147	7151148332389373	CMakeFiles/neuralNetwork.dir/main.c.obj	9561fb1f37beb4de
+6	184	7151148332759413	CMakeFiles/neuralNetwork.dir/neural_network.c.obj	db1684495c170090
+184	308	7151148333949505	neuralNetwork.exe	39c48d6864e1a325
