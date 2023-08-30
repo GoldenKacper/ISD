@@ -882,13 +882,16 @@ testNeuralNetworkKnowledge(NeuralNetwork *nn, DataPacket *dataPacket, char *expe
 
     dataPacketsNumber -= 1; // because during reading data from file, program don't read files' last line
 
+    printf("### Detailed Diagnostic ###\n\n");
+
     for (int i = 0; i < dataPacketsNumber; ++i) {
         calculateNeuralNetworkValues(nn, dataPacket[i]);
         result = NN_process_output(*nn);
         if (result == expectedValues[i]) {
             correctValues++;
         } else {
-            // TODO more diagnostic info
+            printf("Result: %c\tExpected Result: %c\n", result, expectedValues[i]);
+            //NN_neurons_values_print(*nn); // uncomment for more detailed information
         }
 
         convertExpVal(expValAsFloats, expectedValues[i]);
@@ -902,6 +905,7 @@ testNeuralNetworkKnowledge(NeuralNetwork *nn, DataPacket *dataPacket, char *expe
     }
     avgCostVectorValue /= dataPacketsNumber;
 
+    printf("\n");
     printf("Correct Tests: %d\n", correctValues);
     printf("Incorrect Tests: %d\n", dataPacketsNumber - correctValues);
     printf("All Tests: %d\n", dataPacketsNumber);
