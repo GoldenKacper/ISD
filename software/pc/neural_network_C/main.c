@@ -34,8 +34,8 @@ int main() {
 //    learnTest_1();
 
 /// Only one of these functions should be uncomment
-//    forwardPropagation();
-    trainNeuralNetwork();
+    forwardPropagation();
+//    trainNeuralNetwork();
 
     return 0;
 }
