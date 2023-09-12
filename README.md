@@ -9,15 +9,15 @@ The goal of this project is to create an AI that fits on a microcontroller and c
 ## TODO
 - [x] Translate all materials to english
 - [ ] Add license to project
-- [x] Create device schematic
+- [ ] Create device schematic
 - [x] Acquire all components for the device
-- [ ] Design and 3D print the case
-- [ ] Assemble the device
-- [ ] Write data gathering firmware (C++ / MicroPython) for MCU
-- [ ] Collect data
+- [x] Design and 3D print the case
+- [x] Assemble the device
+- [x] Write data gathering firmware (MicroPython) for MCU
+- [x] Collect data
 - [x] Design the neural network
 - [x] Write machine learning software for PC
-- [ ] Train neural network
-- [ ] Write final firmware for MCU (C++)
-- [ ] Test device
+- [x] Train neural network
+- [x] Write final firmware for MCU
+- [x] Test device
 - [ ] Write documentation
