@@ -8,7 +8,7 @@ The goal of this project is to create an AI that fits on a microcontroller and c
 ![NeuralNetwork_3](images/NeuralNetwork_3.jpg)
 ## TODO
 - [x] Translate all materials to english
-- [ ] Add license to project
+- [x] Add license to project
 - [x] Create device schematic
 - [x] Acquire all components for the device
 - [x] Design and 3D print the case
